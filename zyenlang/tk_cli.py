@@ -195,13 +195,12 @@ def interactive(session_dir: str) -> int:
         font_cache[size] = f
         return f
 
-    # Generational double-buffer for the canvas: draw the new frame ON TOP
-    # of the previous frame with a fresh tag, then delete only the previous
-    # frame's items. This eliminates the "blank for one tick" flicker that
-    # `canvas.delete("all")` followed by hundreds of `create_*` causes.
-    gen = [0]              # toggles between 0 and 1
-    last_bg = [None]       # remember bg colour so we skip redundant reconfigures
-    last_scene_text = [""] # skip the whole redraw if scene content is identical
+    # Two small wins kept from the (reverted) generational double-buffer
+    # attempt: skip the bg reconfigure when colour hasn't changed (Windows
+    # repaints on every configure), and skip the whole redraw if the scene
+    # content is byte-identical to the last render.
+    last_bg = [None]
+    last_scene_text = [""]
 
     def redraw_from_scene() -> None:
         if not scene_path.exists():
@@ -210,22 +209,23 @@ def interactive(session_dir: str) -> int:
             raw_text = scene_path.read_text(encoding="utf-8", errors="replace")
         except OSError:
             return
-        # Dedupe identical scenes — saves a full delete/create cycle when the
-        # tick poller fires faster than ZyenLang bumps the scene.
         if raw_text == last_scene_text[0]:
             return
         last_scene_text[0] = raw_text
 
-        new_gen = 1 - gen[0]
-        new_tag = f"gen{new_gen}"
-        old_tag = f"gen{gen[0]}"
-        new_images: list[object] = []
-
+        # Pre-parse all commands BEFORE clearing the canvas so the gap
+        # between delete and the first create is as short as possible.
+        parsed: list[list[str]] = []
         for raw in raw_text.splitlines():
             line = raw.strip("\n\r")
             if not line or line.lstrip().startswith("#"):
                 continue
-            cmd = line.split("\t")
+            parsed.append(line.split("\t"))
+
+        canvas.delete("all")
+        images.clear()
+
+        for cmd in parsed:
             op = cmd[0]
             try:
                 if op == "window" and len(cmd) >= 4:
@@ -241,35 +241,29 @@ def interactive(session_dir: str) -> int:
                         canvas.configure(bg=cmd[1])
                         last_bg[0] = cmd[1]
                 elif op == "line" and len(cmd) >= 7:
-                    canvas.create_line(_to_int(cmd[1]), _to_int(cmd[2]), _to_int(cmd[3]), _to_int(cmd[4]), fill=cmd[5], width=_to_int(cmd[6], 1), tags=new_tag)
+                    canvas.create_line(_to_int(cmd[1]), _to_int(cmd[2]), _to_int(cmd[3]), _to_int(cmd[4]), fill=cmd[5], width=_to_int(cmd[6], 1))
                 elif op == "rect" and len(cmd) >= 6:
                     x, y, w, h = map(_to_int, cmd[1:5])
-                    canvas.create_rectangle(x, y, x + w, y + h, fill=cmd[5], outline="", tags=new_tag)
+                    canvas.create_rectangle(x, y, x + w, y + h, fill=cmd[5], outline="")
                 elif op == "rect_outline" and len(cmd) >= 7:
                     x, y, w, h = map(_to_int, cmd[1:5])
-                    canvas.create_rectangle(x, y, x + w, y + h, outline=cmd[5], width=_to_int(cmd[6], 1), tags=new_tag)
+                    canvas.create_rectangle(x, y, x + w, y + h, outline=cmd[5], width=_to_int(cmd[6], 1))
                 elif op == "circle" and len(cmd) >= 5:
                     x, y, r = map(_to_int, cmd[1:4])
-                    canvas.create_oval(x - r, y - r, x + r, y + r, fill=cmd[4], outline="", tags=new_tag)
+                    canvas.create_oval(x - r, y - r, x + r, y + r, fill=cmd[4], outline="")
                 elif op == "circle_outline" and len(cmd) >= 6:
                     x, y, r = map(_to_int, cmd[1:4])
-                    canvas.create_oval(x - r, y - r, x + r, y + r, outline=cmd[4], width=_to_int(cmd[5], 1), tags=new_tag)
+                    canvas.create_oval(x - r, y - r, x + r, y + r, outline=cmd[4], width=_to_int(cmd[5], 1))
                 elif op == "text" and len(cmd) >= 6:
                     size_val = _to_int(cmd[5], 16)
-                    canvas.create_text(_to_int(cmd[1]), _to_int(cmd[2]), text=cmd[3], fill=cmd[4], font=pick_font(size_val), anchor="nw", tags=new_tag)
+                    canvas.create_text(_to_int(cmd[1]), _to_int(cmd[2]), text=cmd[3], fill=cmd[4], font=pick_font(size_val), anchor="nw")
                 elif op == "image" and len(cmd) >= 4:
                     import tkinter as _tk
                     img = _tk.PhotoImage(file=cmd[1])
-                    new_images.append(img)
-                    canvas.create_image(_to_int(cmd[2]), _to_int(cmd[3]), image=img, anchor="nw", tags=new_tag)
+                    images.append(img)
+                    canvas.create_image(_to_int(cmd[2]), _to_int(cmd[3]), image=img, anchor="nw")
             except Exception as exc:
-                canvas.create_text(12, height - 28, text=f"tk command error: {op}: {exc}", fill="#ff5555", anchor="nw", tags=new_tag)
-
-        # New items are now on top of the old frame. Wipe the old frame.
-        canvas.delete(old_tag)
-        images.clear()
-        images.extend(new_images)
-        gen[0] = new_gen
+                canvas.create_text(12, height - 28, text=f"tk command error: {op}: {exc}", fill="#ff5555", anchor="nw")
 
     request_path = sd / "request.txt"
 
