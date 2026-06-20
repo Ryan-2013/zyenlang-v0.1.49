@@ -20,6 +20,7 @@ class ZyenError(Exception):
 class StructDef:
     name: str
     fields: Dict[str, str] = field(default_factory=dict)
+    defaults: Dict[str, str] = field(default_factory=dict)
     methods: Dict[str, "FunctionDef"] = field(default_factory=dict)
 
 
@@ -262,6 +263,23 @@ def split_args(text: str) -> List[str]:
     return args
 
 
+def _struct_default_init(struct_name: str, ctx: "TranspileContext") -> str:
+    """Emit a C99 designated initializer that applies declared field defaults.
+
+    For a struct with no field defaults, returns `(StructName){0}` — same as
+    the pre-ZEP-0006 behaviour. For a struct with one or more defaults, emits
+    `(StructName){ .a = 1, .b = "x" }`; C99 zero-fills the rest.
+    """
+    struct = ctx.structs.get(struct_name)
+    if struct is None or not struct.defaults:
+        return f"({struct_name}){{0}}"
+    parts = []
+    for field_name, default_expr in struct.defaults.items():
+        value = transform_expr(default_expr, ctx)
+        parts.append(f".{field_name} = {value}")
+    return f"({struct_name}){{ " + ", ".join(parts) + " }"
+
+
 def _strip_module_prefix_type(ztype: str) -> str:
     """Strip `mod.` qualifiers from a type expression.
 
@@ -479,24 +497,31 @@ def collect_signatures(lines: List[Tuple[int, str]]) -> TranspileContext:
             if struct_name in BUILTIN_TYPES:
                 raise ZyenError(f"line {line_no}: `{struct_name}` is a built-in type name and cannot be used as a struct name")
             fields: Dict[str, str] = {}
+            struct_defaults: Dict[str, str] = {}
             methods: Dict[str, FunctionDef] = {}
             i += 1
             while i < len(lines):
                 f_no, f_line = lines[i]
                 if f_line == "}":
                     break
-                # Struct fields are part of the current object layout, so
-                # v0.1.22 requires explicit `this` field declarations:
+                # Struct fields are part of the current object layout. v0.1.22
+                # required `let this.name: type;`; v0.1.49 also accepts an
+                # optional trailing default expression:
                 #     let this.name: type;
-                fm_field = re.match(r"let\s+this\.([A-Za-z_]\w*)\s*:\s*([A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?)\s*;\s*$", f_line)
+                #     let this.name: type = expr;   (ZEP-0006)
+                fm_field = re.match(r"let\s+this\.([A-Za-z_]\w*)\s*:\s*([A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?)\s*(?:=\s*(.+?))?\s*;\s*$", f_line)
                 if fm_field:
+                    field_name = fm_field.group(1)
                     field_type = fm_field.group(2).replace(" ", "")
+                    default_expr = fm_field.group(3)
                     validate_user_type(field_type, f_no, "struct field")
-                    fields[fm_field.group(1)] = field_type
+                    fields[field_name] = field_type
+                    if default_expr is not None:
+                        struct_defaults[field_name] = default_expr.strip()
                     i += 1
                     continue
-                if re.match(r"(?:let\s+)?[A-Za-z_]\w*\s*:\s*[A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?\s*;\s*$", f_line):
-                    raise ZyenError(f"line {f_no}: struct field must use `let this.name: type;`, for example `let this.list_len: int;`")
+                if re.match(r"(?:let\s+)?[A-Za-z_]\w*\s*:\s*[A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?\s*(?:=\s*.+?)?\s*;\s*$", f_line):
+                    raise ZyenError(f"line {f_no}: struct field must use `let this.name: type;` or `let this.name: type = default;`, for example `let this.list_len: int;`")
                 fm_method = re.match(r"fn\s+([A-Za-z_]\w*)\s*\((.*)\)\s*(?:->\s*([A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?))?\s*\{\s*$", f_line)
                 if fm_method:
                     method_name = fm_method.group(1)
@@ -514,7 +539,7 @@ def collect_signatures(lines: List[Tuple[int, str]]) -> TranspileContext:
                 raise ZyenError(f"line {f_no}: invalid struct member; expected `let this.name: type;` or `fn method(...) -> type {{`")
             else:
                 raise ZyenError(f"line {line_no}: struct `{struct_name}` is missing closing `}}`")
-            ctx.structs[struct_name] = StructDef(name=struct_name, fields=fields, methods=methods)
+            ctx.structs[struct_name] = StructDef(name=struct_name, fields=fields, defaults=struct_defaults, methods=methods)
             i += 1
             continue
 
@@ -556,14 +581,27 @@ def convert_struct_literal(expr: str, ctx: TranspileContext) -> str:
         if typ not in ctx.structs:
             return m.group(0)
         body = m.group(2).strip()
+        struct = ctx.structs[typ]
         parts: List[str] = []
-        for item in split_args(body):
-            if ":" not in item:
-                raise ZyenError(f"invalid struct literal item `{item}`, expected `field: value`")
-            field, value = item.split(":", 1)
-            field = field.strip()
-            value = transform_expr(value.strip(), ctx)
-            parts.append(f".{field} = {value}")
+        provided: set[str] = set()
+        if body:
+            for item in split_args(body):
+                if ":" not in item:
+                    raise ZyenError(f"invalid struct literal item `{item}`, expected `field: value`")
+                field_name, value = item.split(":", 1)
+                field_name = field_name.strip()
+                provided.add(field_name)
+                value = transform_expr(value.strip(), ctx)
+                parts.append(f".{field_name} = {value}")
+        # ZEP-0006: fill in declared defaults for any field the literal didn't
+        # provide. C99 still zero-fills the rest, so fields with no default
+        # keep their previous behaviour.
+        for field_name, default_expr in struct.defaults.items():
+            if field_name not in provided:
+                value = transform_expr(default_expr, ctx)
+                parts.append(f".{field_name} = {value}")
+        if not parts:
+            return f"({typ}){{0}}"
         return f"({typ}){{ " + ", ".join(parts) + " }"
 
     return pattern.sub(repl, expr)
@@ -1689,7 +1727,8 @@ def parse_var_decl(line: str, ctx: TranspileContext, line_no: int, trailing_semi
 
         if explicit_type in ctx.structs:
             declare_symbol(ctx, name, explicit_type, line_no)
-            return f"{explicit_type} {name} = ({explicit_type}){{0}}{ending}"
+            init = _struct_default_init(explicit_type, ctx)
+            return f"{explicit_type} {name} = {init}{ending}"
 
         raise ZyenError(f"line {line_no}: declaration without value is not supported for `{explicit_type}`")
 
@@ -1768,7 +1807,7 @@ def parse_var_decl(line: str, ctx: TranspileContext, line_no: int, trailing_semi
         expr_c = "zl_list_new()"
     elif explicit_type and explicit_type in ctx.structs and expr == explicit_type:
         typ = explicit_type
-        expr_c = f"({explicit_type}){{0}}"
+        expr_c = _struct_default_init(explicit_type, ctx)
     else:
         if typ == "void":
             raise ZyenError(f"line {line_no}: cannot assign a void result to variable `{name}`")
@@ -2513,11 +2552,12 @@ def transpile(source: str) -> str:
                     i += 1
                     break
                 # Skip fields. They were already emitted in emit_struct_defs().
-                if re.match(r"let\s+this\.[A-Za-z_]\w*\s*:\s*[A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?\s*;\s*$", member_line):
+                # ZEP-0006: also accept `let this.name: type = default;`.
+                if re.match(r"let\s+this\.[A-Za-z_]\w*\s*:\s*[A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?\s*(?:=\s*.+?)?\s*;\s*$", member_line):
                     i += 1
                     continue
-                if re.match(r"(?:let\s+)?[A-Za-z_]\w*\s*:\s*[A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?\s*;\s*$", member_line):
-                    raise ZyenError(f"line {member_no}: struct field must use `let this.name: type;`, for example `let this.list_len: int;`")
+                if re.match(r"(?:let\s+)?[A-Za-z_]\w*\s*:\s*[A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?\s*(?:=\s*.+?)?\s*;\s*$", member_line):
+                    raise ZyenError(f"line {member_no}: struct field must use `let this.name: type;` or `let this.name: type = default;`, for example `let this.list_len: int;`")
                 fm_method = re.match(r"fn\s+([A-Za-z_]\w*)\s*\((.*)\)\s*(?:->\s*([A-Za-z_]\w*(?:\s*<\s*[A-Za-z_]\w*\s*>)?))?\s*\{\s*$", member_line)
                 if fm_method:
                     method_name = fm_method.group(1)
