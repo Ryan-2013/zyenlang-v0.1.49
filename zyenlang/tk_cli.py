@@ -157,10 +157,22 @@ def interactive(session_dir: str) -> int:
     canvas.pack(fill="both", expand=True)
     images: list[object] = []
 
+    # Pick the first available monospace family that has decent CJK coverage
+    # (or at least cooperates with Windows' per-glyph font fallback so Chinese
+    # / Japanese / Korean characters don't render as boxes). Falls back to
+    # plain Consolas if none of the preferred families are installed.
+    _preferred = ["Cascadia Mono", "JetBrains Mono", "Sarasa Mono TC",
+                  "Cascadia Code", "Consolas"]
+    try:
+        _available = set(tkfont.families())
+    except Exception:
+        _available = set()
+    editor_family = next((f for f in _preferred if f in _available), "Consolas")
+
     # Measure the editor font once so ZyenLang knows real glyph advance / row
     # height. Editors that want pixel-aligned segments should request font size
     # -16 (Tk treats negative sizes as pixels) which is what we measure here.
-    editor_font = tkfont.Font(family="Consolas", size=-16)
+    editor_font = tkfont.Font(family=editor_family, size=-16)
     measured_char_w = max(1, int(editor_font.measure("M")))
     measured_line_h = max(1, int(editor_font.metrics("linespace")))
 
@@ -179,7 +191,7 @@ def interactive(session_dir: str) -> int:
     def pick_font(size: int) -> object:
         if size in font_cache:
             return font_cache[size]
-        f = tkfont.Font(family="Consolas", size=size)
+        f = tkfont.Font(family=editor_family, size=size)
         font_cache[size] = f
         return f
 
