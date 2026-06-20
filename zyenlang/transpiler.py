@@ -3030,7 +3030,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_check = sub.add_parser("check", help="only validate/transpile in memory")
     p_check.add_argument("input")
 
+    # `zy doctor` — ZEP-0007. Defined in zyenlang.cli.doctor so the check
+    # logic stays out of the transpiler hot path.
+    from .cli import doctor as _doctor_cli
+    _doctor_cli.add_subparser(sub)
+
     args = parser.parse_args(argv)
+    if args.cmd == "doctor":
+        return _doctor_cli.handle(args)
     try:
         input_path = Path(args.input)
         if args.cmd == "build":
