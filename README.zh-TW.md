@@ -2,6 +2,10 @@
 
 [English](README.md) | **繁體中文**
 
+> **相關 repo**
+> - **規範與慣例(ZEPs)**:[zyenlang-zeps](https://github.com/Ryan-2013/zyenlang-zeps)
+> - **IDE(dogfood)**:[zyenlang-ide](https://github.com/Ryan-2013/zyenlang-ide)
+
 ZyenLang 是一個實驗性的 C-like 腳本語言,搭配 Python 風格的工具體驗。
 `.zy` 原始碼會被轉譯成 C,再交給 gcc/clang 編譯。
 

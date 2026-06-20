@@ -2,6 +2,10 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
+> **Related repositories**
+> - **Specs & conventions (ZEPs)**: [zyenlang-zeps](https://github.com/Ryan-2013/zyenlang-zeps)
+> - **IDE (dogfood)**: [zyenlang-ide](https://github.com/Ryan-2013/zyenlang-ide)
+
 ZyenLang is an experimental C-like scripting language with Python-like
 tooling. `.zy` source is transpiled to C, then compiled with gcc/clang.
 
