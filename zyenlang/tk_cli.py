@@ -195,12 +195,100 @@ def interactive(session_dir: str) -> int:
         font_cache[size] = f
         return f
 
-    # Two small wins kept from the (reverted) generational double-buffer
-    # attempt: skip the bg reconfigure when colour hasn't changed (Windows
-    # repaints on every configure), and skip the whole redraw if the scene
-    # content is byte-identical to the last render.
+    # Real flicker fix: maintain a persistent list of canvas item IDs across
+    # frames, matched by index in the scene. For each new scene command we
+    # itemconfigure + coords the existing item (cheap, no flash) instead of
+    # delete-all + create-all (expensive, visible blank moment). Only
+    # truly-new items are created; only leftover items get deleted at the
+    # end. Tk repaints affected regions only.
     last_bg = [None]
     last_scene_text = [""]
+    # Each entry: (item_id, op, image_ref_or_None). op gates reuse: if the
+    # op for this index changed (e.g. "rect" -> "text"), we have to delete
+    # and recreate. image_ref keeps PhotoImage alive for that item.
+    item_slots: list[tuple] = []
+
+    def _emit_item(op: str, cmd: list[str], reuse_id, reuse_img):
+        """Create or update one canvas item. Returns (item_id, image_ref_or_None).
+
+        If reuse_id is not None, the existing item at reuse_id is updated
+        in place. Otherwise a fresh item is created. None is returned for
+        items that can't be created (malformed cmd).
+        """
+        try:
+            if op == "line" and len(cmd) >= 7:
+                x1, y1, x2, y2 = (_to_int(cmd[1]), _to_int(cmd[2]),
+                                  _to_int(cmd[3]), _to_int(cmd[4]))
+                fill, w = cmd[5], _to_int(cmd[6], 1)
+                if reuse_id is not None:
+                    canvas.coords(reuse_id, x1, y1, x2, y2)
+                    canvas.itemconfigure(reuse_id, fill=fill, width=w)
+                    return reuse_id, None
+                return canvas.create_line(x1, y1, x2, y2, fill=fill, width=w), None
+            if op == "rect" and len(cmd) >= 6:
+                x, y, w, h = map(_to_int, cmd[1:5])
+                fill = cmd[5]
+                if reuse_id is not None:
+                    canvas.coords(reuse_id, x, y, x + w, y + h)
+                    canvas.itemconfigure(reuse_id, fill=fill, outline="")
+                    return reuse_id, None
+                return canvas.create_rectangle(x, y, x + w, y + h, fill=fill, outline=""), None
+            if op == "rect_outline" and len(cmd) >= 7:
+                x, y, w, h = map(_to_int, cmd[1:5])
+                outline = cmd[5]
+                lw = _to_int(cmd[6], 1)
+                if reuse_id is not None:
+                    canvas.coords(reuse_id, x, y, x + w, y + h)
+                    canvas.itemconfigure(reuse_id, outline=outline, width=lw, fill="")
+                    return reuse_id, None
+                return canvas.create_rectangle(x, y, x + w, y + h, outline=outline, width=lw), None
+            if op == "circle" and len(cmd) >= 5:
+                x, y, r = map(_to_int, cmd[1:4])
+                fill = cmd[4]
+                if reuse_id is not None:
+                    canvas.coords(reuse_id, x - r, y - r, x + r, y + r)
+                    canvas.itemconfigure(reuse_id, fill=fill, outline="")
+                    return reuse_id, None
+                return canvas.create_oval(x - r, y - r, x + r, y + r, fill=fill, outline=""), None
+            if op == "circle_outline" and len(cmd) >= 6:
+                x, y, r = map(_to_int, cmd[1:4])
+                outline = cmd[4]
+                lw = _to_int(cmd[5], 1)
+                if reuse_id is not None:
+                    canvas.coords(reuse_id, x - r, y - r, x + r, y + r)
+                    canvas.itemconfigure(reuse_id, outline=outline, width=lw, fill="")
+                    return reuse_id, None
+                return canvas.create_oval(x - r, y - r, x + r, y + r, outline=outline, width=lw), None
+            if op == "text" and len(cmd) >= 6:
+                x, y = _to_int(cmd[1]), _to_int(cmd[2])
+                text, fill, size_val = cmd[3], cmd[4], _to_int(cmd[5], 16)
+                font_obj = pick_font(size_val)
+                if reuse_id is not None:
+                    canvas.coords(reuse_id, x, y)
+                    canvas.itemconfigure(reuse_id, text=text, fill=fill, font=font_obj, anchor="nw")
+                    return reuse_id, None
+                return canvas.create_text(x, y, text=text, fill=fill, font=font_obj, anchor="nw"), None
+            if op == "image" and len(cmd) >= 4:
+                import tkinter as _tk
+                img = _tk.PhotoImage(file=cmd[1])
+                x, y = _to_int(cmd[2]), _to_int(cmd[3])
+                if reuse_id is not None:
+                    canvas.coords(reuse_id, x, y)
+                    canvas.itemconfigure(reuse_id, image=img, anchor="nw")
+                    return reuse_id, img
+                return canvas.create_image(x, y, image=img, anchor="nw"), img
+        except Exception as exc:
+            # Show the error inside the canvas without crashing the loop.
+            try:
+                canvas.create_text(12, height - 28, text=f"tk error: {op}: {exc}",
+                                   fill="#ff5555", anchor="nw")
+            except Exception:
+                pass
+        # If we were reusing a slot and the update threw partway, keep the
+        # old id so we don't leak a still-visible item.
+        if reuse_id is not None:
+            return reuse_id, reuse_img
+        return None, None
 
     def redraw_from_scene() -> None:
         if not scene_path.exists():
@@ -213,8 +301,6 @@ def interactive(session_dir: str) -> int:
             return
         last_scene_text[0] = raw_text
 
-        # Pre-parse all commands BEFORE clearing the canvas so the gap
-        # between delete and the first create is as short as possible.
         parsed: list[list[str]] = []
         for raw in raw_text.splitlines():
             line = raw.strip("\n\r")
@@ -222,48 +308,58 @@ def interactive(session_dir: str) -> int:
                 continue
             parsed.append(line.split("\t"))
 
-        canvas.delete("all")
-        images.clear()
+        new_slots: list[tuple] = []
+        slot_idx = 0   # walks through item_slots in lockstep with item-emitting cmds
 
         for cmd in parsed:
             op = cmd[0]
-            try:
-                if op == "window" and len(cmd) >= 4:
-                    root.title(cmd[1])
+            if op == "window" and len(cmd) >= 4:
+                root.title(cmd[1])
+                try:
+                    new_w = _to_int(cmd[2], width)
+                    new_h = _to_int(cmd[3], height)
+                    canvas.configure(width=new_w, height=new_h)
+                except Exception:
+                    pass
+                continue
+            if op in {"bg", "clear"} and len(cmd) >= 2:
+                if cmd[1] != last_bg[0]:
+                    canvas.configure(bg=cmd[1])
+                    last_bg[0] = cmd[1]
+                continue
+            # Item-emitting op. Try to reuse the slot at slot_idx if its
+            # op matches; otherwise delete the stale item and create a
+            # new one in its place.
+            reuse_id = None
+            reuse_img = None
+            if slot_idx < len(item_slots):
+                old_id, old_op, old_img = item_slots[slot_idx]
+                if old_op == op:
+                    reuse_id = old_id
+                    reuse_img = old_img
+                else:
                     try:
-                        new_w = _to_int(cmd[2], width)
-                        new_h = _to_int(cmd[3], height)
-                        canvas.configure(width=new_w, height=new_h)
+                        canvas.delete(old_id)
                     except Exception:
                         pass
-                elif op in {"bg", "clear"} and len(cmd) >= 2:
-                    if cmd[1] != last_bg[0]:
-                        canvas.configure(bg=cmd[1])
-                        last_bg[0] = cmd[1]
-                elif op == "line" and len(cmd) >= 7:
-                    canvas.create_line(_to_int(cmd[1]), _to_int(cmd[2]), _to_int(cmd[3]), _to_int(cmd[4]), fill=cmd[5], width=_to_int(cmd[6], 1))
-                elif op == "rect" and len(cmd) >= 6:
-                    x, y, w, h = map(_to_int, cmd[1:5])
-                    canvas.create_rectangle(x, y, x + w, y + h, fill=cmd[5], outline="")
-                elif op == "rect_outline" and len(cmd) >= 7:
-                    x, y, w, h = map(_to_int, cmd[1:5])
-                    canvas.create_rectangle(x, y, x + w, y + h, outline=cmd[5], width=_to_int(cmd[6], 1))
-                elif op == "circle" and len(cmd) >= 5:
-                    x, y, r = map(_to_int, cmd[1:4])
-                    canvas.create_oval(x - r, y - r, x + r, y + r, fill=cmd[4], outline="")
-                elif op == "circle_outline" and len(cmd) >= 6:
-                    x, y, r = map(_to_int, cmd[1:4])
-                    canvas.create_oval(x - r, y - r, x + r, y + r, outline=cmd[4], width=_to_int(cmd[5], 1))
-                elif op == "text" and len(cmd) >= 6:
-                    size_val = _to_int(cmd[5], 16)
-                    canvas.create_text(_to_int(cmd[1]), _to_int(cmd[2]), text=cmd[3], fill=cmd[4], font=pick_font(size_val), anchor="nw")
-                elif op == "image" and len(cmd) >= 4:
-                    import tkinter as _tk
-                    img = _tk.PhotoImage(file=cmd[1])
-                    images.append(img)
-                    canvas.create_image(_to_int(cmd[2]), _to_int(cmd[3]), image=img, anchor="nw")
-            except Exception as exc:
-                canvas.create_text(12, height - 28, text=f"tk command error: {op}: {exc}", fill="#ff5555", anchor="nw")
+            new_id, new_img = _emit_item(op, cmd, reuse_id, reuse_img)
+            if new_id is not None:
+                new_slots.append((new_id, op, new_img))
+            slot_idx += 1
+
+        # Anything left over from the previous frame (e.g. autocomplete
+        # popup that just closed) gets deleted now.
+        for j in range(slot_idx, len(item_slots)):
+            try:
+                canvas.delete(item_slots[j][0])
+            except Exception:
+                pass
+
+        item_slots[:] = new_slots
+        # Keep the legacy `images` list populated for any external code
+        # that reaches in; image refs now live inside item_slots.
+        images.clear()
+        images.extend(img for (_id, _op, img) in new_slots if img is not None)
 
     request_path = sd / "request.txt"
 
