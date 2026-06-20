@@ -1,0 +1,16 @@
+import <std/test>;
+import <std/robot>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/robot");
+    let limit: JointLimit = robot.joint_limit(-1.0, 1.0);
+    t.eq_float("clamp limit", robot.clamp_joint_limit(2.0, limit), 1.0, 0.0001);
+    t.eq_bool("in limit", robot.in_joint_limit_obj(0.5, limit), true);
+    t.eq_float("velocity limit", robot.limit_velocity(5.0, 2.0), 2.0, 0.0001);
+    let p: Pose2D = robot.pose2d(0.0, 0.0, 0.0);
+    let q: Pose2D = robot.pose_translate(p, 3.0, 4.0);
+    t.eq_float("pose distance", robot.pose_distance(p, q), 5.0, 0.0001);
+    t.eq_float("diff left", robot.diff_drive_left(1.0, 0.5, 2.0), 0.5, 0.0001);
+    t.eq_float("diff right", robot.diff_drive_right(1.0, 0.5, 2.0), 1.5, 0.0001);
+    return t.summary();
+}

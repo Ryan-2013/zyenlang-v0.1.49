@@ -1,0 +1,119 @@
+// Regression cases based on Claude's verify_v143 probes, adapted to v0.1.47 mutation rules.
+import <std/test>;
+import <std/string>;
+
+fn add(xs: List, v: str) -> void {
+    xs.append(v);
+}
+
+struct ProbeBuffer {
+    let this.items: List;
+    let this.dirty: bool;
+
+    fn add(line: str) -> void {
+        this.items.append(line);
+        set this.dirty = true;
+    }
+
+    fn count() -> int {
+        return this.items.len();
+    }
+
+    fn first() -> str {
+        if (this.items.len() == 0) {
+            return "";
+        }
+        return (str)this.items.get(0);
+    }
+}
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("claude-probes");
+
+    let f_lit: str = "f";
+    t.eq_str("f literal does not trigger f-string", f_lit, "f");
+
+    let line: str = "alpha" + "\n" + "beta";
+    t.eq_int("concat with newline literal", string.len(line), 10);
+
+    let chars: List = ["a", "b", "c"];
+    let acc: str = "" + (str)chars.get(0) + (str)chars.get(2);
+    t.eq_str("cast list.get in concat", acc, "ac");
+
+    let dest: List;
+    dest.append((str)chars.get(1));
+    t.eq_str("nested method arg", (str)dest.get(0), "b");
+
+    let sum: int = 0;
+    for (let i: int = 0; i < 3; set i += 1) {
+        set sum += i;
+    }
+    for (let i: int = 0; i < 4; set i += 1) {
+        set sum += i;
+    }
+    t.eq_int("two for-loop let i scopes", sum, 9);
+
+    let x: int = 10;
+    set x += 5;
+    set x -= 2;
+    set x *= 3;
+    set x /= 2;
+    t.eq_int("explicit compound assignment", x, 19);
+
+    let skipped: int = 0;
+    for (let i: int = 0; i < 10; set i += 1) {
+        if (i == 5) {
+            continue;
+        }
+        set skipped += 1;
+    }
+    t.eq_int("continue", skipped, 9);
+
+    let greet: str = "hello";
+    set greet += ", ";
+    set greet += "world";
+    t.eq_str("str += through set", greet, "hello, world");
+
+    let parts: List = string.split("a,b,c", ",");
+    t.eq_int("string.split count", parts.len(), 3);
+    t.eq_str("string.char", string.char(65), "A");
+
+    let multi: List = [
+        "alpha",
+        "beta",
+        "gamma"
+    ];
+    t.eq_int("multi-line list literal", multi.len(), 3);
+
+    let label: str = "?";
+    let n: int = 7;
+    if (n < 3) {
+        set label = "small";
+    } else if (n < 10) {
+        set label = "mid";
+    } else {
+        set label = "big";
+    }
+    t.eq_str("else if", label, "mid");
+
+    let xs: List;
+    add(xs, "alpha");
+    add(xs, "beta");
+    t.eq_int("List mutation through fn arg", xs.len(), 2);
+
+    let buf: ProbeBuffer = ProbeBuffer;
+    buf.add("line one");
+    buf.add("line two");
+    t.eq_int("List as struct field", buf.count(), 2);
+    t.eq_str("struct list first", buf.first(), "line one");
+    t.eq_bool("struct bool field", buf.dirty, true);
+
+    let body: str = "alpha" + string.char(10) + "beta" + string.char(10) + "gamma";
+    for (let i: int = 0; i < 16; set i += 1) {
+        let junk: str = "x" + "x" + "x" + "x";
+        let combined: str = junk + body + junk;
+    }
+    t.eq_str("zl_str_join heap-stable after many joins", body, "alpha\nbeta\ngamma");
+
+    return t.summary();
+}

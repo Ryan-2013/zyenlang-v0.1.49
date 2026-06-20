@@ -1,0 +1,16 @@
+import <std/fs>;
+import <std/term>;
+
+fn main() -> int {
+    let path: str = "build/fs_term_test.txt";
+    fs.write(path, "hello from Zy\n");
+    fs.append(path, "append line\n");
+
+    if (fs.exists(path)) {
+        print(fs.read(path));
+    }
+
+    term.line();
+    print("fs/term ok");
+    return 0;
+}

@@ -1,0 +1,72 @@
+// ZyenLang std/filter v0.1.47
+// Small numeric filters and signal-conditioning helpers.
+import <std/math>;
+
+fn low_pass_float(prev: float, input: float, alpha: float) -> float {
+    let a: float = math.clamp_float(alpha, 0.0, 1.0);
+    return prev + (input - prev) * a;
+}
+
+fn high_pass_float(prev_output: float, input: float, prev_input: float, alpha: float) -> float {
+    let a: float = math.clamp_float(alpha, 0.0, 1.0);
+    return a * (prev_output + input - prev_input);
+}
+
+fn moving_avg2_float(a: float, b: float) -> float {
+    return (a + b) / 2.0;
+}
+
+fn moving_avg3_float(a: float, b: float, c: float) -> float {
+    return (a + b + c) / 3.0;
+}
+
+fn moving_avg4_float(a: float, b: float, c: float, d: float) -> float {
+    return (a + b + c + d) / 4.0;
+}
+
+fn deadband_float(value: float, band: float) -> float {
+    if (math.abs_float(value) <= band) {
+        return 0.0;
+    }
+    return value;
+}
+
+fn deadband_int(value: int, band: int) -> int {
+    if (math.abs_int(value) <= band) {
+        return 0;
+    }
+    return value;
+}
+
+fn slew_rate_limit_float(prev: float, target: float, max_delta: float) -> float {
+    let delta: float = target - prev;
+    if (delta > max_delta) {
+        return prev + max_delta;
+    }
+    if (delta < 0.0 - max_delta) {
+        return prev - max_delta;
+    }
+    return target;
+}
+
+fn slew_rate_limit_int(prev: int, target: int, max_delta: int) -> int {
+    let delta: int = target - prev;
+    if (delta > max_delta) {
+        return prev + max_delta;
+    }
+    if (delta < 0 - max_delta) {
+        return prev - max_delta;
+    }
+    return target;
+}
+
+fn threshold_bool(value: float, threshold: float) -> bool {
+    return value >= threshold;
+}
+
+fn hysteresis_bool(value: float, low: float, high: float, prev: bool) -> bool {
+    if (prev) {
+        return value > low;
+    }
+    return value >= high;
+}

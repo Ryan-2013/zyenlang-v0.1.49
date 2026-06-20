@@ -1,0 +1,18 @@
+import <std/tk>;
+
+fn main() -> int {
+    tk.open("Zyen TK demo", 800, 480);
+    tk.bg("#111111");
+
+    for (let i = 0; i < 6; i++) {
+        let x: int = 40 + i * 90;
+        tk.rect(x, 80, 60, 60, "#ff8800");
+        tk.text(x, 150, f"box {i}", "#ffffff", 14);
+    }
+
+    tk.circle(400, 280, 60, "#00aaff");
+    tk.line(40, 360, 760, 360, "#55ff99", 4);
+    tk.text(40, 30, "Hello from ZyenLang TK", "#ffffff", 24);
+
+    return tk.show();
+}

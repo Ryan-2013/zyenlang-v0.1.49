@@ -1,0 +1,25 @@
+import <std/test>;
+import <std/map>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/map");
+    let m: StringMap = map.new();
+    t.eq_bool("empty", m.is_empty(), true);
+    m.put("name", "Zyen");
+    m.put("kind", "language");
+    t.eq_int("len two", m.len(), 2);
+    t.eq_bool("has name", m.has("name"), true);
+    t.eq_str("get name", m.get("name", "none"), "Zyen");
+    t.eq_str("default", m.get("missing", "fallback"), "fallback");
+    m.put("name", "ZyenLang");
+    t.eq_int("replace keeps len", m.len(), 2);
+    t.eq_str("replace value", m.get("name", "none"), "ZyenLang");
+    let ks: List = m.keys();
+    t.eq_int("keys len", ks.len(), 2);
+    t.eq_bool("remove exists", m.remove("kind"), true);
+    t.eq_bool("remove missing", m.remove("kind"), false);
+    t.eq_int("len after remove", m.len(), 1);
+    m.clear();
+    t.eq_bool("clear", m.is_empty(), true);
+    return t.summary();
+}

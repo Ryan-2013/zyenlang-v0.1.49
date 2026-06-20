@@ -1,0 +1,19 @@
+fn main() -> int {
+    let xs = [1, "hi", true];
+
+    print(xs.get(0));
+    print(xs.get(1));
+    print(xs.get(2));
+
+    xs.set(0, "changed");
+    xs.append(3.14);
+
+    print(xs.get(0));
+    print(xs.get(3));
+
+    let p: ptr = xs.ptr(0);
+    set *p = 99;
+    print(xs.get(0));
+
+    return 0;
+}

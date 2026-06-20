@@ -1,0 +1,19 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "zyenlang",
+      "camelcase": "ZyenLang",
+      "title": "ZyenLang",
+      "scope": "source.zyenlang",
+      "file-types": ["zy"],
+      "injection-regex": "^zyenlang$",
+      "class-name": "TreeSitterZyenLang"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.10",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for ZyenLang"
+  }
+}

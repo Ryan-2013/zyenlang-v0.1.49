@@ -1,0 +1,106 @@
+// ZyenLang std/robot v0.1.47
+// Robotics-oriented helpers for joint limits, 2D pose math, and wheel drive.
+import <std/math>;
+import <std/units>;
+import <std/filter>;
+import <std/control>;
+
+struct Pose2D {
+    let this.x: float;
+    let this.y: float;
+    let this.theta: float;
+}
+
+struct JointLimit {
+    let this.min: float;
+    let this.max: float;
+}
+
+fn pose2d(x: float, y: float, theta: float) -> Pose2D {
+    return Pose2D { x: x, y: y, theta: theta };
+}
+
+fn joint_limit(min_value: float, max_value: float) -> JointLimit {
+    return JointLimit { min: min_value, max: max_value };
+}
+
+fn clamp_joint(angle: float, min_value: float, max_value: float) -> float {
+    return math.clamp_float(angle, min_value, max_value);
+}
+
+fn clamp_joint_limit(angle: float, limit: JointLimit) -> float {
+    return math.clamp_float(angle, limit.min, limit.max);
+}
+
+fn in_joint_limit(angle: float, min_value: float, max_value: float) -> bool {
+    return angle >= min_value && angle <= max_value;
+}
+
+fn in_joint_limit_obj(angle: float, limit: JointLimit) -> bool {
+    return in_joint_limit(angle, limit.min, limit.max);
+}
+
+fn deg_to_rad(deg: float) -> float {
+    return units.deg_to_rad(deg);
+}
+
+fn rad_to_deg(rad: float) -> float {
+    return units.rad_to_deg(rad);
+}
+
+fn normalize_angle_rad(angle: float) -> float {
+    return math.normalize_angle_rad(angle);
+}
+
+fn normalize_angle_deg(angle: float) -> float {
+    return math.rad_to_deg(math.normalize_angle_rad(math.deg_to_rad(angle)));
+}
+
+fn limit_velocity(v: float, max_v: float) -> float {
+    return math.clamp_float(v, 0.0 - max_v, max_v);
+}
+
+fn limit_accel(a: float, max_a: float) -> float {
+    return math.clamp_float(a, 0.0 - max_a, max_a);
+}
+
+fn apply_deadband(value: float, band: float) -> float {
+    return filter.deadband_float(value, band);
+}
+
+fn step_joint(current: float, target: float, max_delta: float) -> float {
+    return control.step_toward_float(current, target, max_delta);
+}
+
+fn pose_translate(p: Pose2D, dx: float, dy: float) -> Pose2D {
+    return Pose2D { x: p.x + dx, y: p.y + dy, theta: p.theta };
+}
+
+fn pose_rotate(p: Pose2D, dtheta: float) -> Pose2D {
+    return Pose2D { x: p.x, y: p.y, theta: normalize_angle_rad(p.theta + dtheta) };
+}
+
+fn pose_distance(a: Pose2D, b: Pose2D) -> float {
+    let dx: float = b.x - a.x;
+    let dy: float = b.y - a.y;
+    return math.sqrt_float(dx * dx + dy * dy);
+}
+
+fn diff_drive_left(linear: float, angular: float, track_width: float) -> float {
+    return linear - angular * track_width / 2.0;
+}
+
+fn diff_drive_right(linear: float, angular: float, track_width: float) -> float {
+    return linear + angular * track_width / 2.0;
+}
+
+fn wheel_rad_s(linear_speed: float, wheel_radius: float) -> float {
+    if (wheel_radius == 0.0) {
+        stop "wheel_rad_s expects wheel_radius != 0";
+    }
+    return linear_speed / wheel_radius;
+}
+
+fn wheel_rpm(linear_speed: float, wheel_radius: float) -> float {
+    return units.rad_s_to_rpm(wheel_rad_s(linear_speed, wheel_radius));
+}

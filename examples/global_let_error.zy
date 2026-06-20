@@ -1,0 +1,6 @@
+let g_count: int = 5;
+
+fn main() -> int {
+    print(g_count);
+    return 0;
+}

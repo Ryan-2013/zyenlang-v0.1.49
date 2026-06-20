@@ -1,0 +1,80 @@
+// ZyenLang small statistics helpers v0.1.6
+import <std/math>;
+
+fn sum2_int(a: int, b: int) -> int {
+    return a + b;
+}
+
+fn sum3_int(a: int, b: int, c: int) -> int {
+    return a + b + c;
+}
+
+fn sum4_int(a: int, b: int, c: int, d: int) -> int {
+    return a + b + c + d;
+}
+
+fn avg2_int(a: int, b: int) -> int {
+    return (a + b) / 2;
+}
+
+fn avg3_int(a: int, b: int, c: int) -> int {
+    return (a + b + c) / 3;
+}
+
+fn sum2_float(a: float, b: float) -> float {
+    return a + b;
+}
+
+fn sum3_float(a: float, b: float, c: float) -> float {
+    return a + b + c;
+}
+
+fn sum4_float(a: float, b: float, c: float, d: float) -> float {
+    return a + b + c + d;
+}
+
+fn avg2_float(a: float, b: float) -> float {
+    return (a + b) / 2.0;
+}
+
+fn avg3_float(a: float, b: float, c: float) -> float {
+    return (a + b + c) / 3.0;
+}
+
+fn avg4_float(a: float, b: float, c: float, d: float) -> float {
+    return (a + b + c + d) / 4.0;
+}
+
+fn weighted_avg_float(a: float, wa: float, b: float, wb: float) -> float {
+    let total: float = wa + wb;
+    if (total == 0.0) {
+        return 0.0;
+    }
+    return (a * wa + b * wb) / total;
+}
+
+fn variance2_float(a: float, b: float) -> float {
+    let mean: float = avg2_float(a, b);
+    return (math.square_float(a - mean) + math.square_float(b - mean)) / 2.0;
+}
+
+fn variance3_float(a: float, b: float, c: float) -> float {
+    let mean: float = avg3_float(a, b, c);
+    return (math.square_float(a - mean) + math.square_float(b - mean) + math.square_float(c - mean)) / 3.0;
+}
+
+fn stddev2_float(a: float, b: float) -> float {
+    return math.sqrt_float(variance2_float(a, b));
+}
+
+fn stddev3_float(a: float, b: float, c: float) -> float {
+    return math.sqrt_float(variance3_float(a, b, c));
+}
+
+fn median3_int(a: int, b: int, c: int) -> int {
+    return a + b + c - math.min3_int(a, b, c) - math.max3_int(a, b, c);
+}
+
+fn median3_float(a: float, b: float, c: float) -> float {
+    return a + b + c - math.min3_float(a, b, c) - math.max3_float(a, b, c);
+}

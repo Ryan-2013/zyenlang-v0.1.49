@@ -1,0 +1,15 @@
+import <std/prelude>;
+
+fn main() -> int {
+    let safe: int = math.clamp_int(120, 0, 100);
+    let y: float = math.lerp_float(10.0, 20.0, 0.25);
+    let ok: bool = check.between_int(safe, 0, 100);
+    let pwm: int = motor.motor_pwm_step(3000, 2800, 50, 5, 0, 100);
+
+    print(safe);
+    print(y);
+    print(ok);
+    print(pwm);
+
+    return 0;
+}

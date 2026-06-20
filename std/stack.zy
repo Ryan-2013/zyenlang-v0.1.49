@@ -1,0 +1,63 @@
+// ZyenLang std/stack v0.1.47
+// Simple typed stack facade backed by List. Values are stored in List-internal Any.
+
+struct Stack {
+    let this.items: List;
+
+    fn push_str(value: str) -> void {
+        this.items.append(value);
+    }
+
+    fn push_int(value: int) -> void {
+        this.items.append(value);
+    }
+
+    fn push_float(value: float) -> void {
+        this.items.append(value);
+    }
+
+    fn push_bool(value: bool) -> void {
+        this.items.append(value);
+    }
+
+    fn pop_str() -> str {
+        return (str)this.items.pop();
+    }
+
+    fn pop_int() -> int {
+        return (int)this.items.pop();
+    }
+
+    fn pop_float() -> float {
+        return (float)this.items.pop();
+    }
+
+    fn pop_bool() -> bool {
+        return (bool)this.items.pop();
+    }
+
+    fn peek_str() -> str {
+        return (str)this.items.get(this.items.len() - 1);
+    }
+
+    fn peek_int() -> int {
+        return (int)this.items.get(this.items.len() - 1);
+    }
+
+    fn len() -> int {
+        return this.items.len();
+    }
+
+    fn is_empty() -> bool {
+        return this.items.len() == 0;
+    }
+
+    fn clear() -> void {
+        this.items.clear();
+    }
+}
+
+fn new() -> Stack {
+    let s: Stack = Stack;
+    return s;
+}

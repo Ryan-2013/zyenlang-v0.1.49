@@ -1,0 +1,31 @@
+import <std/prelude>;
+
+fn main() -> int {
+    let a: int = math.clamp_int(150, 0, 100);
+    let b: float = math.sqrt_float(81.0);
+    let ok: bool = check.between_int(a, 0, 100);
+    let name_len: int = string.len("ZyenLang");
+    let has_lang: bool = string.contains("ZyenLang", "Lang");
+    let flags: int = bit.set_bit(0, 3);
+    let wrapped: int = range.wrap_int(12, 0, 9);
+    let eased: float = ease.smoothstep(0.5);
+    let avg: float = stats.avg3_float(10.0, 20.0, 30.0);
+    let rnd: int = random.range_int(123, 1, 6);
+    let rpm_rad: float = motor.rpm_to_rad_s(60.0);
+    let out: float = pid.output(1.0, 0.1, 0.01, 5.0, 2.0, 1.0, 0.0, 100.0);
+
+    print(a);
+    print(b);
+    print(ok);
+    print(name_len);
+    print(has_lang);
+    print(flags);
+    print(wrapped);
+    print(eased);
+    print(avg);
+    print(rnd);
+    print(rpm_rad);
+    print(out);
+
+    return 0;
+}

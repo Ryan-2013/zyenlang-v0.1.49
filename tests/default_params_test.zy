@@ -1,0 +1,19 @@
+import <std/test>;
+
+fn add(a: int, b: int = 10) -> int {
+    return a + b;
+}
+
+fn join3(a: str, b: str = "B", c: str = "C") -> str {
+    return a + b + c;
+}
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("default params");
+    t.eq_int("default one arg", add(5), 15);
+    t.eq_int("override default", add(5, 2), 7);
+    t.eq_str("default two strings", join3("A"), "ABC");
+    t.eq_str("override middle", join3("A", "x"), "AxC");
+    t.eq_str("override all", join3("A", "x", "y"), "Axy");
+    return t.summary();
+}

@@ -1,0 +1,82 @@
+// ZyenLang standard control helpers v0.1.6
+import <std/math>;
+
+fn choose_int(cond: bool, a: int, b: int) -> int {
+    if (cond) {
+        return a;
+    }
+    return b;
+}
+
+fn choose_float(cond: bool, a: float, b: float) -> float {
+    if (cond) {
+        return a;
+    }
+    return b;
+}
+
+fn choose_bool(cond: bool, a: bool, b: bool) -> bool {
+    if (cond) {
+        return a;
+    }
+    return b;
+}
+
+fn choose_str(cond: bool, a: str, b: str) -> str {
+    if (cond) {
+        return a;
+    }
+    return b;
+}
+
+fn bool_to_int(x: bool) -> int {
+    if (x) {
+        return 1;
+    }
+    return 0;
+}
+
+fn not_bool(x: bool) -> bool {
+    if (x) {
+        return false;
+    }
+    return true;
+}
+
+fn toggle(x: bool) -> bool {
+    return not_bool(x);
+}
+
+fn gate_int(enable: bool, value: int) -> int {
+    if (enable) {
+        return value;
+    }
+    return 0;
+}
+
+fn gate_float(enable: bool, value: float) -> float {
+    if (enable) {
+        return value;
+    }
+    return 0.0;
+}
+
+fn step_toward_int(current: int, target: int, step: int) -> int {
+    if (current < target) {
+        return math.min_int(current + step, target);
+    }
+    if (current > target) {
+        return math.max_int(current - step, target);
+    }
+    return current;
+}
+
+fn step_toward_float(current: float, target: float, step: float) -> float {
+    if (current < target) {
+        return math.min_float(current + step, target);
+    }
+    if (current > target) {
+        return math.max_float(current - step, target);
+    }
+    return current;
+}

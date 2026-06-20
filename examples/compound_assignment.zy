@@ -1,0 +1,23 @@
+import <std/string>;
+
+fn main() -> int {
+    let x: int = 1;
+    set x += 2;
+    set x *= 10;
+    set x -= 5;
+    set x /= 5;
+    print(x);
+
+    let s: str = "zy";
+    set s += "en";
+    print(s);
+
+    for (let i = 0; i < 5; i++) {
+        if (i == 2) {
+            continue;
+        }
+        print(i);
+    }
+
+    return 0;
+}

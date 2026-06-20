@@ -1,0 +1,32 @@
+// Command-line helper module.
+// Usage:
+//   import <std/cmd>;
+//   let code: int = cmd.run("echo hello");
+//
+// Security note: these functions call the system shell. Do not pass untrusted strings.
+
+fn run(command: str) -> int {
+    return zl_cmd_run(command);
+}
+
+fn ok(command: str) -> bool {
+    return zl_cmd_run(command) == 0;
+}
+
+fn fail(command: str) -> bool {
+    return zl_cmd_run(command) != 0;
+}
+
+fn require(command: str) -> int {
+    let code: int = zl_cmd_run(command);
+
+    if (code != 0) {
+        stop "command failed";
+    }
+
+    return code;
+}
+
+fn success(code: int) -> bool {
+    return code == 0;
+}

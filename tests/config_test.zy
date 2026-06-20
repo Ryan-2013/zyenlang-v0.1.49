@@ -1,0 +1,18 @@
+import <std/test>;
+import <std/config>;
+import <std/string>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/config");
+    let cfg: str = "# demo\nname = Zyen\ncount=42\nenabled=true";
+    t.eq_bool("has name", config.has_key(cfg, "name"), true);
+    t.eq_str("get str", config.get_str(cfg, "name", "none"), "Zyen");
+    t.eq_int("get int", config.get_int(cfg, "count", 0), 42);
+    t.eq_bool("get bool", config.get_bool(cfg, "enabled", false), true);
+    t.eq_str("default", config.get_str(cfg, "missing", "fallback"), "fallback");
+    let next: str = config.set(cfg, "count", "99");
+    t.eq_int("set existing", config.get_int(next, "count", 0), 99);
+    let added: str = config.set(next, "mode", "fast");
+    t.eq_str("set new", config.get_str(added, "mode", ""), "fast");
+    return t.summary();
+}

@@ -1,0 +1,6 @@
+let g: int = 5;
+
+fn main() -> int {
+    print(g);
+    return 0;
+}

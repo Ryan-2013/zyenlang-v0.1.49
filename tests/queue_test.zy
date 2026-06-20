@@ -1,0 +1,21 @@
+import <std/test>;
+import <std/queue>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/queue");
+    let q: Queue = queue.new();
+    t.eq_bool("empty", q.is_empty(), true);
+    q.push_str("first");
+    q.push_str("second");
+    t.eq_int("len", q.len(), 2);
+    t.eq_str("peek", q.peek_str(), "first");
+    t.eq_str("pop first", q.pop_str(), "first");
+    t.eq_str("pop second", q.pop_str(), "second");
+    t.eq_bool("empty again", q.is_empty(), true);
+    q.push_int(10);
+    q.push_int(20);
+    t.eq_int("pop int fifo", q.pop_int(), 10);
+    q.clear();
+    t.eq_int("clear", q.len(), 0);
+    return t.summary();
+}

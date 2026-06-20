@@ -1,0 +1,30 @@
+import <std/string>;
+
+fn add_pair(
+    a: int,
+    b: int
+) -> int {
+    return a + b;
+}
+
+fn main() -> int {
+    let text: str = string.replace(
+        "Zyen-Lang",
+        "-",
+        ""
+    );
+
+    let n: int = add_pair(
+        10,
+        20
+    );
+
+    if (
+        string.eq(text, "ZyenLang")
+    ) {
+        print(text);
+    }
+
+    print(n);
+    return 0;
+}

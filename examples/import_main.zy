@@ -1,0 +1,9 @@
+import "lib/math.zy";
+
+fn main() -> int {
+    let a: int = add(3, 4);
+    let b: int = square(a);
+
+    print(b);
+    return 0;
+}

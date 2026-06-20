@@ -1,0 +1,8 @@
+// Time helper module.
+// Usage:
+//   import <std/time>;
+//   let t: int = time.clock_ms();
+
+fn clock_ms() -> int {
+    return zl_time_clock_ms();
+}

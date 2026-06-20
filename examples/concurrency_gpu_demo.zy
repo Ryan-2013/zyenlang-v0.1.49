@@ -1,0 +1,20 @@
+import <std/thread>;
+import <std/coroutine>;
+import <std/fs>;
+import <std/gpu>;
+
+fn main() -> int {
+    print("cpu_count=" + (str)thread.cpu_count());
+    thread.sleep_ms(1);
+
+    let c: Coro = coroutine.new();
+    print("coro step=" + (str)c.next());
+    print("coro step=" + (str)c.next());
+
+    fs.write("demo_a.csv", "1,2,3\n");
+    fs.write("demo_b.csv", "4,5,6\n");
+    gpu.vector_add_csv("demo_a.csv", "demo_b.csv", "demo_out.csv");
+    print(fs.read("demo_out.csv"));
+
+    return 0;
+}

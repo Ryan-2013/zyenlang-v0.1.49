@@ -1,0 +1,6 @@
+fn main() -> int {
+    let out: str = "a";
+    let y: str = out + "\n";
+    print(y);
+    return 0;
+}

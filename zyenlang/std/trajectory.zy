@@ -1,0 +1,42 @@
+// ZyenLang std/trajectory v0.1.47
+// Simple trajectory and interpolation helpers.
+import <std/math>;
+import <std/control>;
+
+fn linear_float(start: float, end: float, t: float) -> float {
+    let tc: float = math.clamp_float(t, 0.0, 1.0);
+    return math.lerp_float(start, end, tc);
+}
+
+fn smoothstep_float(start: float, end: float, t: float) -> float {
+    let tc: float = math.clamp_float(t, 0.0, 1.0);
+    let s: float = tc * tc * (3.0 - 2.0 * tc);
+    return math.lerp_float(start, end, s);
+}
+
+fn step_int(current: int, target: int, step: int) -> int {
+    return control.step_toward_int(current, target, step);
+}
+
+fn step_float(current: float, target: float, step: float) -> float {
+    return control.step_toward_float(current, target, step);
+}
+
+fn ramp_float(current: float, target: float, rate_per_s: float, dt: float) -> float {
+    return step_float(current, target, rate_per_s * dt);
+}
+
+fn time_ratio(elapsed: float, duration: float) -> float {
+    if (duration <= 0.0) {
+        return 1.0;
+    }
+    return math.clamp_float(elapsed / duration, 0.0, 1.0);
+}
+
+fn position_at_time(start: float, end: float, elapsed: float, duration: float) -> float {
+    return linear_float(start, end, time_ratio(elapsed, duration));
+}
+
+fn smooth_position_at_time(start: float, end: float, elapsed: float, duration: float) -> float {
+    return smoothstep_float(start, end, time_ratio(elapsed, duration));
+}

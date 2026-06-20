@@ -1,0 +1,40 @@
+// ZyenLang PID helpers v0.1.6
+import <std/math>;
+
+struct PIDState {
+    let this.integral: float;
+    let this.prev_error: float;
+    let this.output: float;
+}
+
+fn state(integral: float, prev_error: float, output: float) -> PIDState {
+    return PIDState { integral: integral, prev_error: prev_error, output: output };
+}
+
+fn error(target: float, current: float) -> float {
+    return target - current;
+}
+
+fn integral_next(integral: float, error_value: float, dt: float, min_value: float, max_value: float) -> float {
+    let next: float = integral + error_value * dt;
+    return math.clamp_float(next, min_value, max_value);
+}
+
+fn derivative(error_value: float, prev_error: float, dt: float) -> float {
+    if (dt == 0.0) {
+        return 0.0;
+    }
+    return (error_value - prev_error) / dt;
+}
+
+fn output(kp: float, ki: float, kd: float, error_value: float, integral_value: float, derivative_value: float, min_output: float, max_output: float) -> float {
+    let raw: float = kp * error_value + ki * integral_value + kd * derivative_value;
+    return math.clamp_float(raw, min_output, max_output);
+}
+
+fn output_from_state(kp: float, ki: float, kd: float, target: float, current: float, s: PIDState, dt: float, min_integral: float, max_integral: float, min_output: float, max_output: float) -> float {
+    let e: float = error(target, current);
+    let i: float = integral_next(s.integral, e, dt, min_integral, max_integral);
+    let d: float = derivative(e, s.prev_error, dt);
+    return output(kp, ki, kd, e, i, d, min_output, max_output);
+}

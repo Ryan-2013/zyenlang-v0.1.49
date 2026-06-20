@@ -1,0 +1,10 @@
+fn main() -> int {
+    let value: int = 100;
+    let p: ptr = &value;
+
+    print(*p);
+    set *p = 200;
+    print(value);
+
+    return 0;
+}

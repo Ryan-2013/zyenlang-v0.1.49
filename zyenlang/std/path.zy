@@ -1,0 +1,85 @@
+// ZyenLang std/path v0.1.47
+// Canonical path helpers. Prefer this module over fs.basename/dirname/etc.
+import <std/string>;
+
+fn basename(p: str) -> str {
+    return zl_path_basename(p);
+}
+
+fn dirname(p: str) -> str {
+    return zl_path_dirname(p);
+}
+
+fn extension(p: str) -> str {
+    return zl_path_ext(p);
+}
+
+fn join(a: str, b: str) -> str {
+    return zl_path_join(a, b);
+}
+
+fn stem(p: str) -> str {
+    let b: str = basename(p);
+    let ext: str = extension(b);
+    let lb: int = string.len(b);
+    let le: int = string.len(ext);
+    if (le == 0) {
+        return b;
+    }
+    if (le >= lb) {
+        return b;
+    }
+    return string.substring(b, 0, lb - le);
+}
+
+fn normalize(p: str) -> str {
+    let slash: str = "/";
+    let backslash: str = string.char(92);
+    let s: str = string.replace(p, backslash, slash);
+    let out: str = "";
+    let last_slash: bool = false;
+    for (let i: int = 0; i < string.len(s); i += 1) {
+        let c: int = s[i];
+        if (c == 47) {
+            if (!last_slash) {
+                set out += slash;
+            }
+            set last_slash = true;
+        } else {
+            set out += string.char(c);
+            set last_slash = false;
+        }
+    }
+    return out;
+}
+
+fn is_absolute(p: str) -> bool {
+    if (string.len(p) == 0) {
+        return false;
+    }
+    if (p[0] == 47 || p[0] == 92) {
+        return true;
+    }
+    if (string.len(p) >= 3 && p[1] == 58 && (p[2] == 47 || p[2] == 92)) {
+        return true;
+    }
+    return false;
+}
+
+fn with_extension(p: str, ext: str) -> str {
+    let base_dir: str = dirname(p);
+    let name: str = stem(p);
+    let dot_ext: str = ext;
+    if (string.len(ext) > 0 && ext[0] != 46) {
+        set dot_ext = "." + ext;
+    }
+    let next_name: str = name + dot_ext;
+    if (string.eq(base_dir, ".")) {
+        return next_name;
+    }
+    return join(base_dir, next_name);
+}
+
+fn parent(p: str) -> str {
+    return dirname(p);
+}

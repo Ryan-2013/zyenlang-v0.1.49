@@ -1,0 +1,43 @@
+{
+  "name": "zyenlang",
+  "displayName": "ZyenLang",
+  "description": "Syntax highlighting, snippets, and editor support for ZyenLang .zy files.",
+  "version": "0.1.49",
+  "publisher": "zyenlang",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "zyen",
+        "aliases": [
+          "ZyenLang",
+          "zyen"
+        ],
+        "extensions": [
+          ".zy"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "zyen",
+        "scopeName": "source.zyen",
+        "path": "./syntaxes/zyen.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "zyen",
+        "path": "./snippets/zyen.code-snippets"
+      }
+    ]
+  }
+}

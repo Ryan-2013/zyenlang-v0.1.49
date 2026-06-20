@@ -1,0 +1,10 @@
+fn main() -> int {
+    let a: ptr;
+    let b = ptr;
+
+    set *a = b;
+    set *b = 5;
+
+    print(*b);
+    return 0;
+}

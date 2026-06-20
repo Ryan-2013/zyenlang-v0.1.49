@@ -1,0 +1,22 @@
+import <std/prelude>;
+import <std/cmd>;
+
+fn local_add(a: int, b: int) -> int {
+    return a + b;
+}
+
+fn main() -> int {
+    let value: int = math.clamp_int(local_add(40, 80), 0, 100);
+
+    for (let i = 0; i < 5; i++) {
+        if (i == 3) {
+            break;
+        }
+        print(i);
+    }
+
+    print(value);
+    cmd.run("echo ZyenLang on Zed");
+
+    return 0;
+}

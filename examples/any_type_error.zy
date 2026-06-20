@@ -1,0 +1,7 @@
+fn bad(x: Any) -> void {
+    pass;
+}
+
+fn main() -> int {
+    return 0;
+}

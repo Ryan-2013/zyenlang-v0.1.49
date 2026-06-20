@@ -1,0 +1,13 @@
+import <std/gpu>;
+
+fn main() -> int {
+    gpu.info();
+
+    if (gpu.has_torch_cuda()) {
+        print("torch cuda ok");
+    } else {
+        print("torch cuda not available");
+    }
+
+    return 0;
+}

@@ -1,0 +1,25 @@
+import <std/test>;
+import <std/text>;
+import <std/string>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/text");
+    t.eq_int("line_count empty", text.line_count(""), 0);
+    t.eq_int("line_count one", text.line_count("foo"), 1);
+    t.eq_int("line_count trailing", text.line_count("foo\n"), 1);
+    t.eq_int("line_count crlf", text.line_count("a\r\nb"), 2);
+    t.eq_str("get line", text.get_line("a\nb\nc", 1), "b");
+    t.eq_str("indent", text.indent("a\n\nb", 2), "  a\n\n  b");
+    t.eq_str("dedent", text.dedent("    a\n    b", 4), "a\nb");
+    t.eq_int("count indent", text.count_indent("   \n    bar"), 4);
+    t.eq_bool("blank spaces", text.is_blank("   \t"), true);
+    t.eq_str("normalize crlf", text.normalize_newlines("a\r\nb"), "a\nb");
+    t.eq_str("replace line", text.replace_line("a\nb\nc", 1, "B"), "a\nB\nc");
+    t.eq_str("insert line", text.insert_line("a\nb", 1, "Z"), "a\nZ\nb");
+    t.eq_str("remove line", text.remove_line("a\nb\nc", 1), "a\nc");
+    let xs: List;
+    xs.append("a");
+    xs.append("b");
+    t.eq_str("join lines", text.join_lines(xs), "a\nb");
+    return t.summary();
+}

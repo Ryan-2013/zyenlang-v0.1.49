@@ -1,0 +1,15 @@
+import <std/tk>;
+
+fn main() -> int {
+    tk.begin("tk_scene.ztk");
+    tk.window("Zyen TK scene", 640, 360);
+    tk.bg("#16181d");
+    tk.rect(30, 40, 180, 90, "#ff8800");
+    tk.rect_outline(30, 40, 180, 90, "#ffffff", 2);
+    tk.circle(300, 90, 45, "#00aaff");
+    tk.circle_outline(300, 90, 45, "#ffffff", 2);
+    tk.line(30, 180, 610, 180, "#55ff99", 3);
+    tk.text(30, 220, f"scene={tk.script()}", "#ffffff", 18);
+    print(f"tk script generated: {tk.script()}");
+    return 0;
+}

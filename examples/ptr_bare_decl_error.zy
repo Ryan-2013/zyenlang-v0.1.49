@@ -1,0 +1,4 @@
+fn main() -> int {
+    let p: ptr;
+    return 0;
+}

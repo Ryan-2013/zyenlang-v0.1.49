@@ -1,0 +1,17 @@
+fn main() -> int {
+    let x: int = 1;
+
+    if (x == 1) {
+        print("if uses parentheses");
+    } else {
+        print("not equal");
+    }
+
+    for (let i = 0; i < 2; i++) {
+        if (i == 1) {
+            print(i);
+        }
+    }
+
+    return 0;
+}

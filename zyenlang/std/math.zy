@@ -1,0 +1,377 @@
+// ZyenLang standard math helpers v0.1.6
+// No overloads yet, so int/float helpers use explicit suffixes.
+
+fn pi_float() -> float {
+    return 3.141592653589793;
+}
+
+fn tau_float() -> float {
+    return 6.283185307179586;
+}
+
+fn e_float() -> float {
+    return 2.718281828459045;
+}
+
+fn add_int(a: int, b: int) -> int {
+    return a + b;
+}
+
+fn sub_int(a: int, b: int) -> int {
+    return a - b;
+}
+
+fn mul_int(a: int, b: int) -> int {
+    return a * b;
+}
+
+fn div_int(a: int, b: int) -> int {
+    if (b == 0) {
+        stop "div_int divide by zero";
+    }
+    return a / b;
+}
+
+fn mod_int(a: int, b: int) -> int {
+    if (b == 0) {
+        stop "mod_int divide by zero";
+    }
+    return a % b;
+}
+
+fn add_float(a: float, b: float) -> float {
+    return a + b;
+}
+
+fn sub_float(a: float, b: float) -> float {
+    return a - b;
+}
+
+fn mul_float(a: float, b: float) -> float {
+    return a * b;
+}
+
+fn div_float(a: float, b: float) -> float {
+    if (b == 0.0) {
+        stop "div_float divide by zero";
+    }
+    return a / b;
+}
+
+fn abs_int(x: int) -> int {
+    if (x < 0) {
+        return 0 - x;
+    }
+    return x;
+}
+
+fn abs_float(x: float) -> float {
+    if (x < 0.0) {
+        return 0.0 - x;
+    }
+    return x;
+}
+
+fn min_int(a: int, b: int) -> int {
+    if (a < b) {
+        return a;
+    }
+    return b;
+}
+
+fn max_int(a: int, b: int) -> int {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
+
+fn min3_int(a: int, b: int, c: int) -> int {
+    return min_int(min_int(a, b), c);
+}
+
+fn max3_int(a: int, b: int, c: int) -> int {
+    return max_int(max_int(a, b), c);
+}
+
+fn min_float(a: float, b: float) -> float {
+    if (a < b) {
+        return a;
+    }
+    return b;
+}
+
+fn max_float(a: float, b: float) -> float {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
+
+fn min3_float(a: float, b: float, c: float) -> float {
+    return min_float(min_float(a, b), c);
+}
+
+fn max3_float(a: float, b: float, c: float) -> float {
+    return max_float(max_float(a, b), c);
+}
+
+fn clamp_int(x: int, lo: int, hi: int) -> int {
+    if (x < lo) {
+        return lo;
+    }
+    if (x > hi) {
+        return hi;
+    }
+    return x;
+}
+
+fn clamp_float(x: float, lo: float, hi: float) -> float {
+    if (x < lo) {
+        return lo;
+    }
+    if (x > hi) {
+        return hi;
+    }
+    return x;
+}
+
+fn square_int(x: int) -> int {
+    return x * x;
+}
+
+fn square_float(x: float) -> float {
+    return x * x;
+}
+
+fn cube_int(x: int) -> int {
+    return x * x * x;
+}
+
+fn cube_float(x: float) -> float {
+    return x * x * x;
+}
+
+fn sign_int(x: int) -> int {
+    if (x > 0) {
+        return 1;
+    }
+    if (x < 0) {
+        return 0 - 1;
+    }
+    return 0;
+}
+
+fn sign_float(x: float) -> int {
+    if (x > 0.0) {
+        return 1;
+    }
+    if (x < 0.0) {
+        return 0 - 1;
+    }
+    return 0;
+}
+
+fn lerp_float(a: float, b: float, t: float) -> float {
+    return a + (b - a) * t;
+}
+
+fn inverse_lerp_float(a: float, b: float, x: float) -> float {
+    if (b == a) {
+        return 0.0;
+    }
+    return (x - a) / (b - a);
+}
+
+fn map_float(x: float, in_lo: float, in_hi: float, out_lo: float, out_hi: float) -> float {
+    let t: float = inverse_lerp_float(in_lo, in_hi, x);
+    return lerp_float(out_lo, out_hi, t);
+}
+
+fn percent_float(part: float, total: float) -> float {
+    if (total == 0.0) {
+        return 0.0;
+    }
+    return part * 100.0 / total;
+}
+
+fn deg_to_rad(deg: float) -> float {
+    return deg * pi_float() / 180.0;
+}
+
+fn rad_to_deg(rad: float) -> float {
+    return rad * 180.0 / pi_float();
+}
+
+fn near_float(a: float, b: float, eps: float) -> bool {
+    return abs_float(a - b) <= eps;
+}
+
+fn trunc_float(x: float) -> int {
+    return (int)x;
+}
+
+fn floor_float(x: float) -> int {
+    let i: int = (int)x;
+    if (x < i) {
+        return i - 1;
+    }
+    return i;
+}
+
+fn ceil_float(x: float) -> int {
+    let i: int = (int)x;
+    if (x > i) {
+        return i + 1;
+    }
+    return i;
+}
+
+fn round_float(x: float) -> int {
+    if (x >= 0.0) {
+        return (int)(x + 0.5);
+    }
+    return (int)(x - 0.5);
+}
+
+fn frac_float(x: float) -> float {
+    return x - floor_float(x);
+}
+
+fn pow2_int(exp: int) -> int {
+    let value: int = 1;
+    for (let i = 0; i < exp; i++) {
+        set value = value * 2;
+    }
+    return value;
+}
+
+fn pow_int(base: int, exp: int) -> int {
+    if (exp < 0) {
+        stop "pow_int expects exp >= 0";
+    }
+    let value: int = 1;
+    for (let i = 0; i < exp; i++) {
+        set value = value * base;
+    }
+    return value;
+}
+
+fn pow_float_int(base: float, exp: int) -> float {
+    if (exp < 0) {
+        stop "pow_float_int expects exp >= 0";
+    }
+    let value: float = 1.0;
+    for (let i = 0; i < exp; i++) {
+        set value = value * base;
+    }
+    return value;
+}
+
+fn factorial_int(n: int) -> int {
+    if (n < 0) {
+        stop "factorial_int expects n >= 0";
+    }
+    let value: int = 1;
+    for (let i = 2; i <= n; i++) {
+        set value = value * i;
+    }
+    return value;
+}
+
+fn fibonacci_int(n: int) -> int {
+    if (n < 0) {
+        stop "fibonacci_int expects n >= 0";
+    }
+    if (n <= 1) {
+        return n;
+    }
+    let a: int = 0;
+    let b: int = 1;
+    for (let i = 2; i <= n; i++) {
+        let next: int = a + b;
+        set a = b;
+        set b = next;
+    }
+    return b;
+}
+
+fn gcd_int(a: int, b: int) -> int {
+    let x: int = abs_int(a);
+    let y: int = abs_int(b);
+    for (let i = 0; i < 128; i++) {
+        if (y != 0) {
+            let t: int = x % y;
+            set x = y;
+            set y = t;
+        }
+    }
+    return x;
+}
+
+fn lcm_int(a: int, b: int) -> int {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    return abs_int(a * b) / gcd_int(a, b);
+}
+
+fn sqrt_float(x: float) -> float {
+    if (x < 0.0) {
+        stop "sqrt_float expects x >= 0";
+    }
+    if (x == 0.0) {
+        return 0.0;
+    }
+    let guess: float = x;
+    if (x < 1.0) {
+        set guess = 1.0;
+    }
+    for (let i = 0; i < 16; i++) {
+        set guess = 0.5 * (guess + x / guess);
+    }
+    return guess;
+}
+
+fn normalize_angle_rad(x: float) -> float {
+    let y: float = x;
+    for (let i = 0; i < 16; i++) {
+        if (y > pi_float()) {
+            set y = y - tau_float();
+        }
+        if (y < 0.0 - pi_float()) {
+            set y = y + tau_float();
+        }
+    }
+    return y;
+}
+
+fn sin_float(x: float) -> float {
+    let y: float = normalize_angle_rad(x);
+    let y2: float = y * y;
+    let term: float = y;
+    let sum: float = y;
+    set term = term * (0.0 - y2) / (2.0 * 3.0);
+    set sum = sum + term;
+    set term = term * (0.0 - y2) / (4.0 * 5.0);
+    set sum = sum + term;
+    set term = term * (0.0 - y2) / (6.0 * 7.0);
+    set sum = sum + term;
+    set term = term * (0.0 - y2) / (8.0 * 9.0);
+    set sum = sum + term;
+    set term = term * (0.0 - y2) / (10.0 * 11.0);
+    set sum = sum + term;
+    return sum;
+}
+
+fn cos_float(x: float) -> float {
+    return sin_float(x + pi_float() / 2.0);
+}
+
+fn tan_float(x: float) -> float {
+    let c: float = cos_float(x);
+    if (abs_float(c) < 0.000001) {
+        stop "tan_float undefined near cos(x)=0";
+    }
+    return sin_float(x) / c;
+}

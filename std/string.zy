@@ -1,0 +1,181 @@
+// ZyenLang string helpers v0.1.6
+// str maps to const char*. This module avoids allocation and returns indexes/bools.
+import <std/char>;
+
+fn len(s: str) -> int {
+    let n: int = 0;
+    for (; s[n] != 0; n++) {
+    }
+    return n;
+}
+
+fn is_empty(s: str) -> bool {
+    return s[0] == 0;
+}
+
+fn char_at(s: str, index: int) -> int {
+    if (index < 0) {
+        return 0;
+    }
+    return s[index];
+}
+
+fn first_char(s: str) -> int {
+    return s[0];
+}
+
+fn last_char(s: str) -> int {
+    let n: int = len(s);
+    if (n == 0) {
+        return 0;
+    }
+    return s[n - 1];
+}
+
+fn eq(a: str, b: str) -> bool {
+    let i: int = 0;
+    for (; a[i] != 0 || b[i] != 0; i++) {
+        if (a[i] != b[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn neq(a: str, b: str) -> bool {
+    return !eq(a, b);
+}
+
+fn starts_with(s: str, prefix: str) -> bool {
+    for (let i = 0; prefix[i] != 0; i++) {
+        if (s[i] != prefix[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn ends_with(s: str, suffix: str) -> bool {
+    let ls: int = len(s);
+    let lp: int = len(suffix);
+    if (lp > ls) {
+        return false;
+    }
+    let offset: int = ls - lp;
+    for (let i = 0; i < lp; i++) {
+        if (s[offset + i] != suffix[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn index_of(s: str, needle: str) -> int {
+    let ls: int = len(s);
+    let ln: int = len(needle);
+    if (ln == 0) {
+        return 0;
+    }
+    if (ln > ls) {
+        return 0 - 1;
+    }
+    for (let i = 0; i <= ls - ln; i++) {
+        let ok: bool = true;
+        for (let j = 0; j < ln; j++) {
+            if (s[i + j] != needle[j]) {
+                set ok = false;
+            }
+        }
+        if (ok) {
+            return i;
+        }
+    }
+    return 0 - 1;
+}
+
+fn contains(s: str, needle: str) -> bool {
+    return index_of(s, needle) >= 0;
+}
+
+fn count_char(s: str, c: int) -> int {
+    let count: int = 0;
+    for (let i = 0; s[i] != 0; i++) {
+        if (s[i] == c) {
+            set count = count + 1;
+        }
+    }
+    return count;
+}
+
+fn count_substr(s: str, needle: str) -> int {
+    let count: int = 0;
+    let ls: int = len(s);
+    let ln: int = len(needle);
+    if (ln == 0 || ln > ls) {
+        return 0;
+    }
+    for (let i = 0; i <= ls - ln; i++) {
+        let ok: bool = true;
+        for (let j = 0; j < ln; j++) {
+            if (s[i + j] != needle[j]) {
+                set ok = false;
+            }
+        }
+        if (ok) {
+            set count = count + 1;
+        }
+    }
+    return count;
+}
+
+fn is_digit_at(s: str, index: int) -> bool {
+    return char.is_digit(char_at(s, index));
+}
+
+fn all_digits(s: str) -> bool {
+    if (is_empty(s)) {
+        return false;
+    }
+    for (let i = 0; s[i] != 0; i++) {
+        if (!char.is_digit(s[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn substring(s: str, start: int, length: int) -> str {
+    return zl_str_substring(s, start, length);
+}
+
+fn split(s: str, sep: str) -> List {
+    return zl_str_split(s, sep);
+}
+
+fn char(c: int) -> str {
+    return zl_char_to_str(c);
+}
+
+fn lower(s: str) -> str {
+    return zl_str_lower(s);
+}
+
+fn upper(s: str) -> str {
+    return zl_str_upper(s);
+}
+
+fn trim(s: str) -> str {
+    return zl_str_trim(s);
+}
+
+fn repeat(s: str, count: int) -> str {
+    return zl_str_repeat(s, count);
+}
+
+fn replace(s: str, old: str, repl: str) -> str {
+    return zl_str_replace(s, old, repl);
+}
+
+fn reverse(s: str) -> str {
+    return zl_str_reverse(s);
+}

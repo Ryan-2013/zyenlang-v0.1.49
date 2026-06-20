@@ -1,0 +1,24 @@
+fn todo() {
+    pass;
+}
+
+fn choose(flag: bool) -> int {
+    if (flag) {
+        pass;
+    } else {
+        pass;
+    }
+
+    return 7;
+}
+
+fn main() -> int {
+    todo();
+
+    for (let i = 0; i < 3; i++) {
+        pass;
+    }
+
+    print(choose(true));
+    return 0;
+}

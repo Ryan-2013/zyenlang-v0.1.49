@@ -1,0 +1,9 @@
+import <std/csv>;
+
+fn main() -> int {
+    let row: List = csv.split_line("alpha,\"beta,gamma\",delta");
+    print(row.len());
+    print(row.get(1));
+    print(csv.join_line(row));
+    return 0;
+}

@@ -1,0 +1,24 @@
+fn main() -> int {
+    let a: ptr<int>;
+    print(a);
+
+    let value: int = 10;
+    set a = &value;
+    print(*a);
+
+    set *a = 20;
+    print(value);
+
+    set a = None;
+    print(a);
+
+    let *b: ptr<int> = 1;
+    print(*b);
+    set *b = 2;
+    print(*b);
+
+    let *c: ptr<int>;
+    print(c);
+
+    return 0;
+}

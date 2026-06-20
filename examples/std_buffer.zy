@@ -1,0 +1,14 @@
+import <std/buffer>;
+import <std/ptr>;
+
+fn main() -> int {
+    let value: int = 10;
+    let p: ptr<int> = &value;
+
+    print(buffer.read_int(p));
+    buffer.write_int(p, 77);
+    print(value);
+    print(ptr.is_type(p, "int"));
+
+    return 0;
+}

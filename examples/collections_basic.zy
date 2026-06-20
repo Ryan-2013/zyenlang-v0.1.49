@@ -1,0 +1,27 @@
+import <std/stack>;
+import <std/queue>;
+import <std/map>;
+import <std/set>;
+
+fn main() -> int {
+    let s: Stack = stack.new();
+    s.push_str("first");
+    s.push_str("second");
+    print(s.pop_str());
+
+    let q: Queue = queue.new();
+    q.push_str("first");
+    q.push_str("second");
+    print(q.pop_str());
+
+    let m: StringMap = map.new();
+    m.put("name", "ZyenLang");
+    print(m.get("name", "none"));
+
+    let tags: StringSet = set.new();
+    tags.add("robotics");
+    tags.add("cv");
+    print(tags.len());
+
+    return 0;
+}

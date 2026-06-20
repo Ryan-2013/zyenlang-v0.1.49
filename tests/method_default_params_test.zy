@@ -1,0 +1,17 @@
+import <std/test>;
+
+struct Counter {
+    let this.base: int;
+
+    fn add(x: int = 1) -> int {
+        return this.base + x;
+    }
+}
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("method default params");
+    let c: Counter = Counter { base: 10 };
+    t.eq_int("method default", c.add(), 11);
+    t.eq_int("method override", c.add(5), 15);
+    return t.summary();
+}

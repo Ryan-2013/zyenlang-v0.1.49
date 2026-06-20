@@ -1,0 +1,15 @@
+fn add(a: int, b: int = 10) -> int {
+    return a + b;
+}
+
+fn say(name: str, prefix: str = "hi ") -> str {
+    return prefix + name;
+}
+
+fn main() -> int {
+    print(add(5));
+    print(add(5, 2));
+    print(say("Zyen"));
+    print(say("Zyen", "hello "));
+    return 0;
+}

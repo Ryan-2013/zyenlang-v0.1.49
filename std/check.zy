@@ -1,0 +1,100 @@
+// ZyenLang standard check / predicate helpers v0.1.6
+import <std/math>;
+
+fn is_zero_int(x: int) -> bool {
+    return x == 0;
+}
+
+fn is_zero_float(x: float, eps: float) -> bool {
+    return math.abs_float(x) <= eps;
+}
+
+fn is_positive_int(x: int) -> bool {
+    return x > 0;
+}
+
+fn is_negative_int(x: int) -> bool {
+    return x < 0;
+}
+
+fn is_positive_float(x: float) -> bool {
+    return x > 0.0;
+}
+
+fn is_negative_float(x: float) -> bool {
+    return x < 0.0;
+}
+
+fn is_even(x: int) -> bool {
+    return x % 2 == 0;
+}
+
+fn is_odd(x: int) -> bool {
+    return x % 2 != 0;
+}
+
+fn is_multiple_of(x: int, base: int) -> bool {
+    if (base == 0) {
+        return false;
+    }
+    return x % base == 0;
+}
+
+fn is_power_of_two(x: int) -> bool {
+    if (x <= 0) {
+        return false;
+    }
+    return (x & (x - 1)) == 0;
+}
+
+fn between_int(x: int, lo: int, hi: int) -> bool {
+    return x >= lo && x <= hi;
+}
+
+fn between_float(x: float, lo: float, hi: float) -> bool {
+    return x >= lo && x <= hi;
+}
+
+fn outside_int(x: int, lo: int, hi: int) -> bool {
+    return x < lo || x > hi;
+}
+
+fn outside_float(x: float, lo: float, hi: float) -> bool {
+    return x < lo || x > hi;
+}
+
+fn in_open_range_int(x: int, lo: int, hi: int) -> bool {
+    return x > lo && x < hi;
+}
+
+fn in_open_range_float(x: float, lo: float, hi: float) -> bool {
+    return x > lo && x < hi;
+}
+
+fn same_sign_int(a: int, b: int) -> bool {
+    return math.sign_int(a) == math.sign_int(b);
+}
+
+fn same_sign_float(a: float, b: float) -> bool {
+    return math.sign_float(a) == math.sign_float(b);
+}
+
+fn all2(a: bool, b: bool) -> bool {
+    return a && b;
+}
+
+fn all3(a: bool, b: bool, c: bool) -> bool {
+    return a && b && c;
+}
+
+fn any2(a: bool, b: bool) -> bool {
+    return a || b;
+}
+
+fn any3(a: bool, b: bool, c: bool) -> bool {
+    return a || b || c;
+}
+
+fn xor_bool(a: bool, b: bool) -> bool {
+    return a != b;
+}

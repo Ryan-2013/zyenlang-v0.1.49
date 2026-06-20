@@ -1,0 +1,16 @@
+struct Bag {
+    let this.items: List;
+    fn add(v: str) -> void {
+        this.items.append(v);
+    }
+    fn show() -> void {
+        print(this.items.len());
+        print(this.items.get(0));
+    }
+}
+fn main() -> int {
+    let b: Bag;
+    b.add("hi");
+    b.show();
+    return 0;
+}

@@ -1,0 +1,79 @@
+// ZyenLang std/test v0.1.47
+// Lightweight test harness. Use `let t: TestStats = test.new_stats("suite");`.
+import <std/string>;
+import <std/time>;
+
+struct TestStats {
+    let this.suite: str;
+    let this.pass: int;
+    let this.fail: int;
+
+    fn check(title: str, ok: bool) -> void {
+        if (ok) {
+            set this.pass = this.pass + 1;
+            print("OK    " + title);
+        } else {
+            set this.fail = this.fail + 1;
+            print("FAIL  " + title);
+        }
+    }
+
+    fn eq_int(title: str, actual: int, expected: int) -> void {
+        this.check(title, actual == expected);
+    }
+
+    fn eq_str(title: str, actual: str, expected: str) -> void {
+        this.check(title, string.eq(actual, expected));
+    }
+
+    fn eq_bool(title: str, actual: bool, expected: bool) -> void {
+        this.check(title, actual == expected);
+    }
+
+    fn eq_float(title: str, actual: float, expected: float, eps: float) -> void {
+        let diff: float = actual - expected;
+        if (diff < 0.0) {
+            set diff = 0.0 - diff;
+        }
+        this.check(title, diff <= eps);
+    }
+
+    fn contains_str(title: str, haystack: str, needle: str) -> void {
+        this.check(title, string.contains(haystack, needle));
+    }
+
+    fn in_range_int(title: str, actual: int, lo: int, hi: int) -> void {
+        this.check(title, actual >= lo && actual <= hi);
+    }
+
+    fn summary() -> int {
+        print("---- " + this.suite + " summary ----");
+        print("pass=" + (str)this.pass + " fail=" + (str)this.fail);
+        return this.fail;
+    }
+}
+
+fn new_stats(suite: str) -> TestStats {
+    let s: TestStats = TestStats;
+    set s.suite = suite;
+    return s;
+}
+
+fn ok(title: str, condition: bool) -> bool {
+    if (condition) {
+        print("OK    " + title);
+    } else {
+        print("FAIL  " + title);
+    }
+    return condition;
+}
+
+fn bench_start() -> int {
+    return time.clock_ms();
+}
+
+fn bench_end(name: str, start_ms: int) -> int {
+    let elapsed: int = time.clock_ms() - start_ms;
+    print("BENCH " + name + " " + (str)elapsed + "ms");
+    return elapsed;
+}

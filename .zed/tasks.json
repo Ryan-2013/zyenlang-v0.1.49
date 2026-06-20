@@ -1,0 +1,62 @@
+[
+  {
+    "label": "Zyen: check current file",
+    "command": "python",
+    "args": [
+      "zyen.py",
+      "check",
+      "$ZED_FILE"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "current",
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system"
+  },
+  {
+    "label": "Zyen: run current file",
+    "command": "python",
+    "args": [
+      "zyen.py",
+      "run",
+      "$ZED_FILE"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "current",
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system"
+  },
+  {
+    "label": "Zyen: build C from current file",
+    "command": "python",
+    "args": [
+      "zyen.py",
+      "build",
+      "$ZED_FILE",
+      "-o",
+      "build/$ZED_STEM.c"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "current",
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system"
+  },
+  {
+    "label": "Zyen: build exe from current file",
+    "command": "python",
+    "args": [
+      "zyen.py",
+      "build",
+      "$ZED_FILE",
+      "-o",
+      "build/$ZED_STEM.exe"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "current",
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system"
+  }
+]

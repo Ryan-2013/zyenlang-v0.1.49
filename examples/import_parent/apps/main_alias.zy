@@ -1,0 +1,6 @@
+import "../hi.zy" as hi;
+
+fn main() -> int {
+    hi.say_hi();
+    return 0;
+}

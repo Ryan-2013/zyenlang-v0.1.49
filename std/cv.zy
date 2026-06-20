@@ -1,0 +1,43 @@
+// Computer vision bridge module.
+// Usage:
+//   import <std/cv>;
+//   cv.info();
+//   cv.gray("input.png", "gray.png");
+//
+// This is a thin bridge. It calls: python -m zyenlang.cv_cli ...
+// Install OpenCV in Python first: python -m pip install opencv-python
+
+fn info() -> int {
+    return zl_cv_info();
+}
+
+fn readable(input: str) -> bool {
+    return zl_cv_readable(input) == 0;
+}
+
+fn gray(input: str, output: str) -> int {
+    return zl_cv_gray(input, output);
+}
+
+fn resize(input: str, output: str, width: int, height: int) -> int {
+    return zl_cv_resize(input, output, width, height);
+}
+
+fn blur(input: str, output: str, ksize: int) -> int {
+    return zl_cv_blur(input, output, ksize);
+}
+
+fn canny(input: str, output: str, low: int, high: int) -> int {
+    return zl_cv_canny(input, output, low, high);
+}
+
+fn threshold(input: str, output: str, thresh: int) -> int {
+    return zl_cv_threshold(input, output, thresh);
+}
+
+fn require_ok(code: int) -> int {
+    if (code != 0) {
+        stop "cv operation failed";
+    }
+    return code;
+}

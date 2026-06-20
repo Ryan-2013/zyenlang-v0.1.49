@@ -1,0 +1,52 @@
+// ZyenLang std/coroutine v0.1.48
+// Cooperative coroutine state helper. It does not create OS threads.
+// Use Coro as a small state machine and call c.next()/c.wait_ms()/c.ready().
+
+import <std/time>;
+
+struct Coro {
+    let this.step: int;
+    let this.done: bool;
+    let this.wait_until_ms: int;
+
+    fn current() -> int {
+        return this.step;
+    }
+
+    fn next() -> int {
+        let s: int = this.step;
+        set this.step += 1;
+        return s;
+    }
+
+    fn jump(step: int) -> void {
+        set this.step = step;
+    }
+
+    fn finish() -> void {
+        set this.done = true;
+    }
+
+    fn is_done() -> bool {
+        return this.done;
+    }
+
+    fn wait_ms(ms: int) -> void {
+        set this.wait_until_ms = time.clock_ms() + ms;
+    }
+
+    fn ready() -> bool {
+        return time.clock_ms() >= this.wait_until_ms;
+    }
+
+    fn reset() -> void {
+        set this.step = 0;
+        set this.done = false;
+        set this.wait_until_ms = 0;
+    }
+}
+
+fn new() -> Coro {
+    let c: Coro = Coro;
+    return c;
+}

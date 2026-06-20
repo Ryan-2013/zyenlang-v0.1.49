@@ -1,0 +1,6 @@
+import <std/cmd>;
+
+fn main() -> int {
+    cmd.require("echo command ok");
+    return 0;
+}

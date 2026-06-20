@@ -1,0 +1,40 @@
+// ZyenLang easing helpers v0.1.6
+import <std/math>;
+
+fn linear(t: float) -> float {
+    return t;
+}
+
+fn in_quad(t: float) -> float {
+    return t * t;
+}
+
+fn out_quad(t: float) -> float {
+    return 1.0 - (1.0 - t) * (1.0 - t);
+}
+
+fn in_out_quad(t: float) -> float {
+    if (t < 0.5) {
+        return 2.0 * t * t;
+    }
+    return 1.0 - math.pow_float_int(0.0 - 2.0 * t + 2.0, 2) / 2.0;
+}
+
+fn in_cubic(t: float) -> float {
+    return t * t * t;
+}
+
+fn out_cubic(t: float) -> float {
+    let u: float = 1.0 - t;
+    return 1.0 - u * u * u;
+}
+
+fn smoothstep(t: float) -> float {
+    let x: float = math.clamp_float(t, 0.0, 1.0);
+    return x * x * (3.0 - 2.0 * x);
+}
+
+fn smootherstep(t: float) -> float {
+    let x: float = math.clamp_float(t, 0.0, 1.0);
+    return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+}

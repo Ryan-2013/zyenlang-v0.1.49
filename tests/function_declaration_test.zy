@@ -1,0 +1,21 @@
+import <std/test>;
+
+fn scale(a: int, factor: int = 2) -> int;
+fn greet(name: str, prefix: str = "hi ") -> str;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("function declaration");
+    t.eq_int("prototype default", scale(7), 14);
+    t.eq_int("prototype override", scale(7, 3), 21);
+    t.eq_str("string prototype default", greet("Zyen"), "hi Zyen");
+    t.eq_str("string prototype override", greet("Zyen", "hello "), "hello Zyen");
+    return t.summary();
+}
+
+fn scale(a: int, factor: int) -> int {
+    return a * factor;
+}
+
+fn greet(name: str, prefix: str) -> str {
+    return prefix + name;
+}

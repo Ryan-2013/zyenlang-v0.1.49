@@ -1,0 +1,7 @@
+import <std/cmd>;
+
+fn main() -> int {
+    let i: int = 3;
+    cmd.run(f"echo farg_{i}");
+    return 0;
+}

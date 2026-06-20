@@ -1,0 +1,16 @@
+import <std/test>;
+import <std/log>;
+import <std/fs>;
+import <std/string>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/log");
+    log.set_level(log.level_warn());
+    t.eq_int("level set/get", log.get_level(), log.level_warn());
+    log.to_file("zy_log_test_output.txt");
+    log.warn("hello warn");
+    let content: str = fs.read("zy_log_test_output.txt");
+    t.contains_str("file contains warn", content, "hello warn");
+    log.clear_file();
+    return t.summary();
+}

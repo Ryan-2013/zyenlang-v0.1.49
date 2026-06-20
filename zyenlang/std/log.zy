@@ -1,0 +1,85 @@
+// ZyenLang std/log v0.1.47
+// Simple logger. Uses small state files because top-level mutable variables are not supported yet.
+import <std/fs>;
+import <std/string>;
+import <std/time>;
+
+fn level_debug() -> int {
+    return 0;
+}
+fn level_info() -> int {
+    return 1;
+}
+fn level_warn() -> int {
+    return 2;
+}
+fn level_error() -> int {
+    return 3;
+}
+fn level_none() -> int {
+    return 4;
+}
+
+fn level_file() -> str {
+    return ".zy_log_level";
+}
+fn output_file_state() -> str {
+    return ".zy_log_file";
+}
+
+fn set_level(level: int) -> void {
+    fs.write(level_file(), (str)level);
+}
+
+fn get_level() -> int {
+    if (!fs.exists(level_file())) {
+        return level_info();
+    }
+    return (int)string.trim(fs.read(level_file()));
+}
+
+fn to_file(path: str) -> void {
+    fs.write(output_file_state(), path);
+}
+
+fn clear_file() -> void {
+    fs.write(output_file_state(), "");
+}
+
+fn should_log(level: int) -> bool {
+    return level >= get_level() && get_level() < level_none();
+}
+
+fn emit(level: int, label: str, msg: str) -> void {
+    if (!should_log(level)) {
+        return;
+    }
+    let line: str = "[" + label + "] " + msg;
+    print(line);
+    if (fs.exists(output_file_state())) {
+        let path: str = string.trim(fs.read(output_file_state()));
+        if (string.len(path) > 0) {
+            fs.append(path, line + string.char(10));
+        }
+    }
+}
+
+fn debug(msg: str) -> void {
+    emit(level_debug(), "DEBUG", msg);
+}
+
+fn info(msg: str) -> void {
+    emit(level_info(), "INFO", msg);
+}
+
+fn warn(msg: str) -> void {
+    emit(level_warn(), "WARN", msg);
+}
+
+fn error(msg: str) -> void {
+    emit(level_error(), "ERROR", msg);
+}
+
+fn debug_value(name: str, value: str) -> void {
+    debug(name + "=" + value);
+}

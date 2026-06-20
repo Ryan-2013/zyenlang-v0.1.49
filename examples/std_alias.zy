@@ -1,0 +1,7 @@
+import <std/math> as m;
+
+fn main() -> int {
+    let x: int = m.square_int(7);
+    print(x);
+    return 0;
+}

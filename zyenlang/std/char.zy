@@ -1,0 +1,47 @@
+// ZyenLang char helpers v0.1.6
+// Characters are represented as int ASCII codes.
+
+fn is_digit(c: int) -> bool {
+    return c >= 48 && c <= 57;
+}
+
+fn is_lower(c: int) -> bool {
+    return c >= 97 && c <= 122;
+}
+
+fn is_upper(c: int) -> bool {
+    return c >= 65 && c <= 90;
+}
+
+fn is_alpha(c: int) -> bool {
+    return is_lower(c) || is_upper(c);
+}
+
+fn is_alnum(c: int) -> bool {
+    return is_alpha(c) || is_digit(c);
+}
+
+fn is_space(c: int) -> bool {
+    return c == 32 || c == 9 || c == 10 || c == 13;
+}
+
+fn to_lower(c: int) -> int {
+    if (is_upper(c)) {
+        return c + 32;
+    }
+    return c;
+}
+
+fn to_upper(c: int) -> int {
+    if (is_lower(c)) {
+        return c - 32;
+    }
+    return c;
+}
+
+fn digit_value(c: int) -> int {
+    if (is_digit(c)) {
+        return c - 48;
+    }
+    return 0 - 1;
+}

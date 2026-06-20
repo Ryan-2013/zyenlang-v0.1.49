@@ -1,0 +1,17 @@
+import <std/test>;
+import <std/path>;
+import <std/string>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/path");
+    t.eq_str("basename unix", path.basename("src/main.zy"), "main.zy");
+    t.eq_str("dirname unix", path.dirname("src/main.zy"), "src");
+    t.eq_str("extension", path.extension("src/main.zy"), ".zy");
+    t.eq_str("stem", path.stem("src/main.zy"), "main");
+    t.eq_str("join", path.join("src", "main.zy"), "src/main.zy");
+    t.eq_str("normalize", path.normalize("src//lib\\hi.zy"), "src/lib/hi.zy");
+    t.eq_bool("absolute slash", path.is_absolute("/tmp/a"), true);
+    t.eq_bool("relative", path.is_absolute("src/main.zy"), false);
+    t.eq_str("with ext", path.with_extension("src/main.zy", "c"), "src/main.c");
+    return t.summary();
+}

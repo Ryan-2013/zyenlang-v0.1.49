@@ -1,0 +1,85 @@
+import "zyide_tools.zy" as tools;
+import <std/term>;
+import <std/time>;
+import <std/mem>;
+
+struct IdeState {
+    let this.actions: int;
+    let this.last_code: int;
+
+    fn record(code: int) -> void {
+        set this.actions = this.actions + 1;
+        set this.last_code = code;
+    }
+
+    fn summary() -> str {
+        return f"actions={this.actions}, last_code={this.last_code}";
+    }
+}
+
+fn main() -> int {
+    let state: IdeState = IdeState;
+    let logs: List = List;
+    let start: int = time.clock_ms();
+    let file: str = term.input("Zy file path> ");
+    let last = ptr<int>;
+    set *last = 0;
+
+    for (;;) {
+        tools.banner();
+        tools.show_menu(file);
+        print(f"status: {state.summary()}");
+
+        let raw: str = term.input("choice> ");
+        let choice: int = (int)raw;
+        let code: int = 0;
+
+        if (choice == 1) {
+            set code = tools.check_file(file);
+        } else {
+            if (choice == 2) {
+                set code = tools.run_file(file);
+            } else {
+                if (choice == 3) {
+                    set code = tools.build_c(file);
+                } else {
+                    if (choice == 4) {
+                        set code = tools.build_exe(file);
+                    } else {
+                        if (choice == 5) {
+                            set code = tools.show_source(file);
+                        } else {
+                            if (choice == 6) {
+                                set file = term.input("new Zy file path> ");
+                                pass;
+                            } else {
+                                if (choice == 0) {
+                                    break;
+                                } else {
+                                    print("unknown choice");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        state.record(code);
+        set *last = code;
+        logs.append(f"choice={choice}, code={code}");
+
+        print(f"last pointer code={*last}");
+        term.pause();
+    }
+
+    let elapsed: int = time.clock_ms() - start;
+    print(f"IDE closed, {state.summary()}, elapsed_ms={elapsed}");
+    print(f"log count={logs.len()}");
+
+    if (mem.is_valid(last)) {
+        mem.free(last);
+    }
+
+    return 0;
+}

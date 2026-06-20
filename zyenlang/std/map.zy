@@ -1,0 +1,91 @@
+// ZyenLang std/map v0.1.47
+// String-key/string-value map backed by two Lists.
+import <std/string>;
+
+struct StringMap {
+    let this.keys_list: List;
+    let this.values_list: List;
+
+    fn index_of(key: str) -> int {
+        for (let i: int = 0; i < this.keys_list.len(); i += 1) {
+            if (string.eq((str)this.keys_list.get(i), key)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    fn put(key: str, value: str) -> void {
+        let idx: int = this.index_of(key);
+        if (idx >= 0) {
+            this.values_list.set(idx, value);
+        } else {
+            this.keys_list.append(key);
+            this.values_list.append(value);
+        }
+    }
+
+    fn get(key: str, default_value: str) -> str {
+        let idx: int = this.index_of(key);
+        if (idx >= 0) {
+            return (str)this.values_list.get(idx);
+        }
+        return default_value;
+    }
+
+    fn has(key: str) -> bool {
+        return this.index_of(key) >= 0;
+    }
+
+    fn remove(key: str) -> bool {
+        let idx: int = this.index_of(key);
+        if (idx < 0) {
+            return false;
+        }
+        let next_keys: List;
+        let next_values: List;
+        for (let i: int = 0; i < this.keys_list.len(); i += 1) {
+            if (i != idx) {
+                next_keys.append(this.keys_list.get(i));
+                next_values.append(this.values_list.get(i));
+            }
+        }
+        set this.keys_list = next_keys;
+        set this.values_list = next_values;
+        return true;
+    }
+
+    fn keys() -> List {
+        let out: List;
+        for (let i: int = 0; i < this.keys_list.len(); i += 1) {
+            out.append(this.keys_list.get(i));
+        }
+        return out;
+    }
+
+    fn values() -> List {
+        let out: List;
+        for (let i: int = 0; i < this.values_list.len(); i += 1) {
+            out.append(this.values_list.get(i));
+        }
+        return out;
+    }
+
+    fn len() -> int {
+        return this.keys_list.len();
+    }
+
+    fn is_empty() -> bool {
+        return this.keys_list.len() == 0;
+    }
+
+    fn clear() -> void {
+        this.keys_list.clear();
+        this.values_list.clear();
+    }
+}
+
+fn new() -> StringMap {
+    let m: StringMap = StringMap;
+    return m;
+}

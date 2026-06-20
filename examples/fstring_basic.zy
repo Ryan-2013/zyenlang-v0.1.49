@@ -1,0 +1,13 @@
+fn main() -> int {
+    let i: int = 12;
+    let f: float = 3.5;
+    let ok: bool = true;
+    let p = ptr<int>;
+
+    set *p = 99;
+
+    print(f"i={i}, f={f}, ok={ok}, p={*p}");
+    print(f"literal braces {{ and }} work");
+
+    return 0;
+}

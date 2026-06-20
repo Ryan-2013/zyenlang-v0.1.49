@@ -1,0 +1,16 @@
+struct Box {
+    let this.value: str;
+    fn set_value(v: str) -> void {
+        set this.value = v;
+    }
+    fn show() -> void {
+        print(this.value);
+    }
+}
+fn main() -> int {
+    let xs = [123];
+    let b: Box;
+    b.set_value((str)xs.get(0));
+    b.show();
+    return 0;
+}

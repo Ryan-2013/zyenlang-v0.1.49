@@ -1,0 +1,10 @@
+import <std/cv>;
+
+fn main() -> int {
+    cv.info();
+
+    let code: int = cv.gray("input.png", "build/gray.png");
+    print(code);
+
+    return 0;
+}

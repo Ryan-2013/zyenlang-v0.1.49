@@ -1,0 +1,73 @@
+// Small motor-control helpers, useful for embedded-style examples v0.1.6.
+import <std/math>;
+
+fn motor_error(target: int, current: int) -> int {
+    return target - current;
+}
+
+fn motor_deadband(error: int, band: int) -> int {
+    if (math.abs_int(error) <= band) {
+        return 0;
+    }
+    return error;
+}
+
+fn motor_pwm_step(target: int, current: int, current_pwm: int, step: int, min_pwm: int, max_pwm: int) -> int {
+    let error: int = target - current;
+    let next: int = current_pwm;
+
+    if (error > 0) {
+        set next = current_pwm + step;
+    } else {
+        if (error < 0) {
+            set next = current_pwm - step;
+        }
+    }
+
+    return math.clamp_int(next, min_pwm, max_pwm);
+}
+
+fn motor_pwm_step_deadband(target: int, current: int, current_pwm: int, step: int, band: int, min_pwm: int, max_pwm: int) -> int {
+    let error: int = motor_deadband(target - current, band);
+    let next: int = current_pwm;
+
+    if (error > 0) {
+        set next = current_pwm + step;
+    } else {
+        if (error < 0) {
+            set next = current_pwm - step;
+        }
+    }
+
+    return math.clamp_int(next, min_pwm, max_pwm);
+}
+
+fn rpm_to_rad_s(rpm: float) -> float {
+    return rpm * math.tau_float() / 60.0;
+}
+
+fn rad_s_to_rpm(rad_s: float) -> float {
+    return rad_s * 60.0 / math.tau_float();
+}
+
+fn electrical_angle(mech_angle: float, pole_pairs: int, offset: float) -> float {
+    return math.normalize_angle_rad(mech_angle * pole_pairs + offset);
+}
+
+fn torque_from_iq(kt: float, iq: float) -> float {
+    return kt * iq;
+}
+
+fn iq_from_torque(kt: float, torque: float) -> float {
+    if (kt == 0.0) {
+        stop "iq_from_torque expects kt != 0";
+    }
+    return torque / kt;
+}
+
+fn speed_limited_pwm(target: int, current: int, pwm: int, step: int, speed_limit: int, min_pwm: int, max_pwm: int) -> int {
+    if (math.abs_int(current) > speed_limit) {
+        return math.clamp_int(pwm - step, min_pwm, max_pwm);
+    }
+    return motor_pwm_step(target, current, pwm, step, min_pwm, max_pwm);
+}

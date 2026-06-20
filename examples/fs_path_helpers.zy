@@ -1,0 +1,10 @@
+import <std/fs>;
+
+fn main() -> int {
+    let p: str = fs.join("src", "main.zy");
+    print(p);
+    print(fs.basename("src/main.zy"));
+    print(fs.dirname("src/main.zy"));
+    print(fs.extension("src/main.zy"));
+    return 0;
+}

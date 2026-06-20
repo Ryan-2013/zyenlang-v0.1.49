@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.zy": "zyen"
+  },
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4
+}

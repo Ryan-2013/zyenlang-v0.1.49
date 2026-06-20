@@ -1,0 +1,20 @@
+import <std/test>;
+import <std/csv>;
+import <std/string>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/csv");
+    let row: List = csv.split_line("a,b,c");
+    t.eq_int("split count", row.len(), 3);
+    t.eq_str("split field", (str)row.get(1), "b");
+    let quoted: List = csv.split_line("a,\"b,c\",d");
+    t.eq_str("quoted comma", (str)quoted.get(1), "b,c");
+    let escaped: List = csv.split_line("\"a\"\"b\",c");
+    t.eq_str("escaped quote", (str)escaped.get(0), "a\"b");
+    let out: List;
+    out.append("a");
+    out.append("b,c");
+    out.append("d\"e");
+    t.eq_str("join line", csv.join_line(out), "a,\"b,c\",\"d\"\"e\"");
+    return t.summary();
+}

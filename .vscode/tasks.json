@@ -1,0 +1,56 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Zyen: check current file",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/zyen.py",
+        "check",
+        "${file}"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Zyen: run current file",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/zyen.py",
+        "run",
+        "${file}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Zyen: build C from current file",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/zyen.py",
+        "build",
+        "${file}",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}.c"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Zyen: build EXE from current file",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/zyen.py",
+        "build",
+        "${file}",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}.exe"
+      ],
+      "group": "build"
+    }
+  ]
+}

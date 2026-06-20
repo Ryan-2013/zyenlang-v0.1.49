@@ -1,0 +1,107 @@
+// Tk-like 2D GUI / Canvas bridge for ZyenLang.
+// Usage:
+//   import <std/tk>;
+//   tk.open("Demo", 800, 480);
+//   tk.rect(40, 40, 120, 80, "#ff8800");
+//   tk.show();
+//
+// This is a low-level bridge over Python tkinter.
+// It writes a small scene script, then asks: python -m zyenlang.tk_cli show ...
+
+fn begin(path: str) -> int {
+    return zl_tk_begin(path);
+}
+
+fn open(title: str, width: int, height: int) -> int {
+    return zl_tk_open(title, width, height);
+}
+
+fn window(title: str, width: int, height: int) -> int {
+    return zl_tk_window(title, width, height);
+}
+
+fn bg(color: str) -> int {
+    return zl_tk_bg(color);
+}
+
+fn clear(color: str) -> int {
+    return zl_tk_clear(color);
+}
+
+fn line(x1: int, y1: int, x2: int, y2: int, color: str, width: int) -> int {
+    return zl_tk_line(x1, y1, x2, y2, color, width);
+}
+
+fn rect(x: int, y: int, width: int, height: int, color: str) -> int {
+    return zl_tk_rect(x, y, width, height, color);
+}
+
+fn rect_outline(x: int, y: int, width: int, height: int, color: str, line_width: int) -> int {
+    return zl_tk_rect_outline(x, y, width, height, color, line_width);
+}
+
+fn circle(x: int, y: int, radius: int, color: str) -> int {
+    return zl_tk_circle(x, y, radius, color);
+}
+
+fn circle_outline(x: int, y: int, radius: int, color: str, line_width: int) -> int {
+    return zl_tk_circle_outline(x, y, radius, color, line_width);
+}
+
+fn text(x: int, y: int, value: str, color: str, size: int) -> int {
+    return zl_tk_text(x, y, value, color, size);
+}
+
+fn image(path: str, x: int, y: int) -> int {
+    return zl_tk_image(path, x, y);
+}
+
+fn script() -> str {
+    return zl_tk_script();
+}
+
+fn show() -> int {
+    return zl_tk_show();
+}
+
+fn show_for(ms: int) -> int {
+    return zl_tk_show_for(ms);
+}
+
+// Long-lived session mode: open a Tk window and drive it from ZyenLang.
+// See docs/tk_session_ipc.md for the protocol.
+fn session_open(title: str, width: int, height: int, session_dir: str) -> int {
+    return zl_tk_session_open(title, width, height, session_dir);
+}
+
+// Start a new frame: truncates the scene file so the next draw calls
+// produce a fresh canvas.
+fn session_begin_frame() -> int {
+    return zl_tk_session_begin_frame();
+}
+
+// Tell the Tk window to reload the scene and repaint.
+fn session_redraw() -> int {
+    return zl_tk_session_redraw();
+}
+
+// Block up to `timeout_ms` for the next event. Returns "" on timeout.
+// Event strings are tab-separated, e.g. "key\tEscape", "keychar\ta",
+// "mouse\t100\t200", "ready", "quit".
+fn session_next_event(timeout_ms: int) -> str {
+    return zl_tk_session_next_event(timeout_ms);
+}
+
+fn session_close() -> int {
+    return zl_tk_session_close();
+}
+
+// Measured glyph advance for the editor font in the live Tk window.
+// Cached after the first call; safe to spam.
+fn session_char_w() -> int {
+    return zl_tk_session_char_w();
+}
+
+fn session_line_h() -> int {
+    return zl_tk_session_line_h();
+}

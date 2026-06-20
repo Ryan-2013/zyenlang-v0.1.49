@@ -1,0 +1,23 @@
+// ZyenLang std/thread v0.1.48
+// Minimal low-level thread/process helpers.
+// Note: spawn_cmd is a detached OS process helper, not a joinable Zyen thread yet.
+
+fn sleep_ms(ms: int) -> int {
+    return zl_thread_sleep_ms(ms);
+}
+
+fn yield_now() -> int {
+    return zl_thread_yield_now();
+}
+
+fn cpu_count() -> int {
+    return zl_thread_cpu_count();
+}
+
+fn run_cmd(command: str) -> int {
+    return zl_thread_run_cmd(command);
+}
+
+fn spawn_cmd(command: str) -> int {
+    return zl_thread_spawn_cmd(command);
+}

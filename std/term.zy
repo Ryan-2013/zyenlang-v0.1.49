@@ -1,0 +1,20 @@
+// Terminal helper module for CLI/TUI tools.
+// Usage:
+//   import <std/term>;
+//   let name: str = term.input("name> ");
+
+fn clear() -> int {
+    return zl_term_clear();
+}
+
+fn line() -> void {
+    zl_term_line();
+}
+
+fn input(prompt: str) -> str {
+    return zl_term_input(prompt);
+}
+
+fn pause() -> int {
+    return zl_term_pause();
+}

@@ -1,0 +1,12 @@
+import <std/test>;
+import <std/trajectory>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/trajectory");
+    t.eq_float("linear", trajectory.linear_float(0.0, 10.0, 0.5), 5.0, 0.0001);
+    t.eq_float("time ratio", trajectory.time_ratio(5.0, 10.0), 0.5, 0.0001);
+    t.eq_float("position time", trajectory.position_at_time(0.0, 20.0, 5.0, 10.0), 10.0, 0.0001);
+    t.eq_int("step int", trajectory.step_int(0, 10, 3), 3);
+    t.eq_float("ramp", trajectory.ramp_float(0.0, 10.0, 2.0, 0.5), 1.0, 0.0001);
+    return t.summary();
+}

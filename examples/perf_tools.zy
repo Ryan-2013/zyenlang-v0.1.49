@@ -1,0 +1,21 @@
+fn load_score(rounds: int) -> int {
+    let total: int = 0;
+
+    for (let i = 0; i < rounds; i++) {
+        set total = total + ((i * 7) % 13);
+    }
+
+    return total;
+}
+
+fn status(ok: bool) -> str {
+    if (ok) {
+        return "ok";
+    } else {
+        return "no";
+    }
+}
+
+fn print_str(label: str, data: str) -> void {
+    print(f"{label}: {data}");
+}

@@ -1,0 +1,7 @@
+fn main() -> int {
+    let *a: ptr = 1;
+    print(*a);
+    set *a = 2;
+    print(*a);
+    return 0;
+}

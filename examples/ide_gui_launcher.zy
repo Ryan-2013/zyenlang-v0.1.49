@@ -1,0 +1,6 @@
+import <std/cmd>;
+
+fn main() -> int {
+    print("Zyen GUI IDE self-test");
+    return cmd.run("python -m zyenlang.ide_gui --self-test");
+}

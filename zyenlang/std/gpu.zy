@@ -1,0 +1,47 @@
+// GPU bridge module.
+// Usage:
+//   import <std/gpu>;
+//   gpu.info();
+//   if (gpu.has_torch_cuda()) { print("CUDA ok"); }
+//
+// This module checks optional GPU tools and can call GPU-backed cv helpers.
+
+fn info() -> int {
+    return zl_gpu_info();
+}
+
+fn has_nvidia() -> bool {
+    return zl_gpu_has_nvidia();
+}
+
+fn has_torch_cuda() -> bool {
+    return zl_gpu_has_torch_cuda();
+}
+
+fn has_opencv_cuda() -> bool {
+    return zl_gpu_has_opencv_cuda();
+}
+
+fn cv_gray(input: str, output: str) -> int {
+    return zl_gpu_cv_gray(input, output);
+}
+
+fn require_cuda() -> int {
+    if (!zl_gpu_has_torch_cuda()) {
+        stop "CUDA is not available";
+    }
+    return 0;
+}
+
+
+fn vector_add_csv(a: str, b: str, output: str) -> int {
+    return zl_gpu_vector_add_csv(a, b, output);
+}
+
+fn vector_scale_csv(input: str, scale: float, output: str) -> int {
+    return zl_gpu_vector_scale_csv(input, scale, output);
+}
+
+fn dot_csv(a: str, b: str, output: str) -> int {
+    return zl_gpu_dot_csv(a, b, output);
+}

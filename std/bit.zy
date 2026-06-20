@@ -1,0 +1,69 @@
+// ZyenLang bit helpers v0.1.6
+
+fn bit_and(a: int, b: int) -> int {
+    return a & b;
+}
+
+fn bit_or(a: int, b: int) -> int {
+    return a | b;
+}
+
+fn bit_xor(a: int, b: int) -> int {
+    return a ^ b;
+}
+
+fn bit_not(a: int) -> int {
+    return ~a;
+}
+
+fn shl(a: int, bits: int) -> int {
+    return a << bits;
+}
+
+fn shr(a: int, bits: int) -> int {
+    return a >> bits;
+}
+
+fn mask(bit_index: int) -> int {
+    return 1 << bit_index;
+}
+
+fn get(value: int, bit_index: int) -> bool {
+    return (value & mask(bit_index)) != 0;
+}
+
+fn set_bit(value: int, bit_index: int) -> int {
+    return value | mask(bit_index);
+}
+
+fn clear_bit(value: int, bit_index: int) -> int {
+    return value & ~mask(bit_index);
+}
+
+fn toggle_bit(value: int, bit_index: int) -> int {
+    return value ^ mask(bit_index);
+}
+
+fn has_flag(value: int, flag: int) -> bool {
+    return (value & flag) == flag;
+}
+
+fn add_flag(value: int, flag: int) -> int {
+    return value | flag;
+}
+
+fn remove_flag(value: int, flag: int) -> int {
+    return value & ~flag;
+}
+
+fn low_byte(value: int) -> int {
+    return value & 255;
+}
+
+fn high_byte(value: int) -> int {
+    return (value >> 8) & 255;
+}
+
+fn make_word(high: int, low: int) -> int {
+    return ((high & 255) << 8) | (low & 255);
+}

@@ -1,0 +1,64 @@
+// ZyenLang std/set v0.1.47
+// String set backed by List.
+import <std/string>;
+
+struct StringSet {
+    let this.items: List;
+
+    fn has(value: str) -> bool {
+        for (let i: int = 0; i < this.items.len(); i += 1) {
+            if (string.eq((str)this.items.get(i), value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    fn add(value: str) -> bool {
+        if (this.has(value)) {
+            return false;
+        }
+        this.items.append(value);
+        return true;
+    }
+
+    fn remove(value: str) -> bool {
+        let found: bool = false;
+        let next: List;
+        for (let i: int = 0; i < this.items.len(); i += 1) {
+            let item: str = (str)this.items.get(i);
+            if (string.eq(item, value)) {
+                set found = true;
+            } else {
+                next.append(item);
+            }
+        }
+        set this.items = next;
+        return found;
+    }
+
+    fn values() -> List {
+        let out: List;
+        for (let i: int = 0; i < this.items.len(); i += 1) {
+            out.append(this.items.get(i));
+        }
+        return out;
+    }
+
+    fn len() -> int {
+        return this.items.len();
+    }
+
+    fn is_empty() -> bool {
+        return this.items.len() == 0;
+    }
+
+    fn clear() -> void {
+        this.items.clear();
+    }
+}
+
+fn new() -> StringSet {
+    let s: StringSet = StringSet;
+    return s;
+}

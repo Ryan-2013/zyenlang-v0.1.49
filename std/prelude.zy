@@ -1,0 +1,24 @@
+// Import this when you want the common standard helpers.
+import <std/math>;
+import <std/check>;
+import <std/control>;
+import <std/convert>;
+import <std/char>;
+import <std/string>;
+import <std/bit>;
+import <std/range>;
+import <std/ease>;
+import <std/stats>;
+import <std/random>;
+import <std/geometry>;
+import <std/ptr>;
+import <std/buffer>;
+import <std/motor>;
+import <std/pid>;
+
+import <std/cmd>;
+import <std/mem>;
+import <std/time>;
+
+import <std/term>;
+import <std/fs>;

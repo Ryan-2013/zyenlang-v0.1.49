@@ -1,0 +1,13 @@
+import <std/test>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/test");
+    t.check("check true", true);
+    t.eq_int("eq int", 1 + 1, 2);
+    t.eq_str("eq str", "Zyen", "Zyen");
+    t.eq_bool("eq bool", true, true);
+    t.eq_float("eq float", 1.0, 1.001, 0.01);
+    t.contains_str("contains", "ZyenLang", "Lang");
+    t.in_range_int("range", 5, 1, 10);
+    return t.summary();
+}

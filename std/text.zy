@@ -1,0 +1,212 @@
+// ZyenLang std/text v0.1.47
+// Multi-line text helpers for IDEs, formatters, and small tools.
+import <std/string>;
+
+fn normalize_newlines(s: str) -> str {
+    // Char-by-char concat is O(N^2). Use two O(N) replace passes instead:
+    // CRLF -> LF first, then any remaining bare CR -> LF.
+    let step1: str = string.replace(s, string.char(13) + string.char(10), string.char(10));
+    return string.replace(step1, string.char(13), string.char(10));
+}
+
+fn line_count(s: str) -> int {
+    let text: str = normalize_newlines(s);
+    let n: int = string.len(text);
+    if (n == 0) {
+        return 0;
+    }
+    let count: int = 1;
+    for (let i: int = 0; i < n; i += 1) {
+        if (text[i] == 10 && i < n - 1) {
+            set count += 1;
+        }
+    }
+    return count;
+}
+
+fn get_line(s: str, index: int) -> str {
+    if (index < 0) {
+        return "";
+    }
+    let text: str = normalize_newlines(s);
+    let cur: int = 0;
+    let out: str = "";
+    for (let i: int = 0; i < string.len(text); i += 1) {
+        let c: int = text[i];
+        if (c == 10) {
+            if (cur == index) {
+                return out;
+            }
+            set cur += 1;
+            set out = "";
+        } else {
+            if (cur == index) {
+                set out += string.char(c);
+            }
+        }
+    }
+    if (cur == index) {
+        return out;
+    }
+    return "";
+}
+
+fn join_lines(lines: List) -> str {
+    // Pairwise log-doubling join: O(N log N) total char copies vs the naive
+    // O(N^2) accumulator. Saves seconds on big files.
+    let n: int = lines.len();
+    if (n == 0) {
+        return "";
+    }
+    if (n == 1) {
+        return (str)lines.get(0);
+    }
+    let sep: str = string.char(10);
+    let work: List;
+    for (let i: int = 0; i < n; i += 1) {
+        work.append((str)lines.get(i));
+    }
+    for (; work.len() > 1; ) {
+        let next: List;
+        let m: int = work.len();
+        for (let i: int = 0; i < m; i += 2) {
+            if (i + 1 < m) {
+                let a: str = (str)work.get(i);
+                let b: str = (str)work.get(i + 1);
+                next.append(a + sep + b);
+            } else {
+                next.append((str)work.get(i));
+            }
+        }
+        set work = next;
+    }
+    return (str)work.get(0);
+}
+
+fn indent(s: str, spaces: int) -> str {
+    if (spaces <= 0) {
+        return s;
+    }
+    let prefix: str = string.repeat(" ", spaces);
+    let text: str = normalize_newlines(s);
+    let out: str = "";
+    let at_start: bool = true;
+    for (let i: int = 0; i < string.len(text); i += 1) {
+        let c: int = text[i];
+        if (at_start && c != 10) {
+            set out += prefix;
+            set at_start = false;
+        }
+        set out += string.char(c);
+        if (c == 10) {
+            set at_start = true;
+        }
+    }
+    return out;
+}
+
+fn dedent(s: str, spaces: int) -> str {
+    if (spaces <= 0) {
+        return s;
+    }
+    let text: str = normalize_newlines(s);
+    let out: str = "";
+    let at_start: bool = true;
+    let skipped: int = 0;
+    for (let i: int = 0; i < string.len(text); i += 1) {
+        let c: int = text[i];
+        if (at_start && c == 32 && skipped < spaces) {
+            set skipped += 1;
+        } else {
+            set out += string.char(c);
+            if (c == 10) {
+                set at_start = true;
+                set skipped = 0;
+            } else {
+                set at_start = false;
+            }
+        }
+    }
+    return out;
+}
+
+fn count_indent(s: str) -> int {
+    let n: int = line_count(s);
+    for (let i: int = 0; i < n; i += 1) {
+        let line: str = get_line(s, i);
+        if (!is_blank(line)) {
+            let count: int = 0;
+            for (let j: int = 0; j < string.len(line); j += 1) {
+                if (line[j] == 32) {
+                    set count += 1;
+                } else {
+                    return count;
+                }
+            }
+            return count;
+        }
+    }
+    return 0;
+}
+
+fn is_blank(s: str) -> bool {
+    for (let i: int = 0; i < string.len(s); i += 1) {
+        let c: int = s[i];
+        if (!(c == 32 || c == 9 || c == 10 || c == 13)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn replace_line(s: str, index: int, new_line: str) -> str {
+    let n: int = line_count(s);
+    if (index < 0 || index >= n) {
+        return s;
+    }
+    let lines: List;
+    for (let i: int = 0; i < n; i += 1) {
+        if (i == index) {
+            lines.append(new_line);
+        } else {
+            lines.append(get_line(s, i));
+        }
+    }
+    return join_lines(lines);
+}
+
+fn insert_line(s: str, index: int, line: str) -> str {
+    let n: int = line_count(s);
+    let at: int = index;
+    if (at < 0) {
+        set at = 0;
+    }
+    if (at > n) {
+        set at = n;
+    }
+    let lines: List;
+    for (let i: int = 0; i < n; i += 1) {
+        if (i == at) {
+            lines.append(line);
+        }
+        lines.append(get_line(s, i));
+    }
+    if (at == n) {
+        lines.append(line);
+    }
+    return join_lines(lines);
+}
+
+fn remove_line(s: str, index: int) -> str {
+    let n: int = line_count(s);
+    if (index < 0 || index >= n) {
+        return s;
+    }
+    let lines: List;
+    for (let i: int = 0; i < n; i += 1) {
+        if (i != index) {
+            lines.append(get_line(s, i));
+        }
+    }
+    return join_lines(lines);
+}

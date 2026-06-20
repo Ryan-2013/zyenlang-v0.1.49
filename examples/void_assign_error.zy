@@ -1,0 +1,14 @@
+struct MyList {
+    let this.list_len: int;
+
+    fn append(data: int) -> void {
+        set this.list_len = this.list_len + 1;
+    }
+}
+
+fn main() -> int {
+    let list: MyList = MyList;
+    let x = list.append(1);
+    print(x);
+    return 0;
+}

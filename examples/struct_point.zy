@@ -1,0 +1,16 @@
+struct Point {
+    let this.x: float;
+    let this.y: float;
+}
+
+fn distance2(p: Point) -> float {
+    return p.x * p.x + p.y * p.y;
+}
+
+fn main() -> int {
+    let p: Point = Point { x: 3.0, y: 4.0 };
+    let d: float = distance2(p);
+
+    print(d);
+    return 0;
+}

@@ -1,0 +1,79 @@
+// ZyenLang std/queue v0.1.47
+// FIFO queue facade backed by List. pop_* rebuilds the backing list after removing index 0.
+
+struct Queue {
+    let this.items: List;
+
+    fn push_str(value: str) -> void {
+        this.items.append(value);
+    }
+
+    fn push_int(value: int) -> void {
+        this.items.append(value);
+    }
+
+    fn push_float(value: float) -> void {
+        this.items.append(value);
+    }
+
+    fn push_bool(value: bool) -> void {
+        this.items.append(value);
+    }
+
+    fn shift_left() -> void {
+        let next: List;
+        for (let i: int = 1; i < this.items.len(); i += 1) {
+            next.append(this.items.get(i));
+        }
+        set this.items = next;
+    }
+
+    fn pop_str() -> str {
+        let value: str = (str)this.items.get(0);
+        this.shift_left();
+        return value;
+    }
+
+    fn pop_int() -> int {
+        let value: int = (int)this.items.get(0);
+        this.shift_left();
+        return value;
+    }
+
+    fn pop_float() -> float {
+        let value: float = (float)this.items.get(0);
+        this.shift_left();
+        return value;
+    }
+
+    fn pop_bool() -> bool {
+        let value: bool = (bool)this.items.get(0);
+        this.shift_left();
+        return value;
+    }
+
+    fn peek_str() -> str {
+        return (str)this.items.get(0);
+    }
+
+    fn peek_int() -> int {
+        return (int)this.items.get(0);
+    }
+
+    fn len() -> int {
+        return this.items.len();
+    }
+
+    fn is_empty() -> bool {
+        return this.items.len() == 0;
+    }
+
+    fn clear() -> void {
+        this.items.clear();
+    }
+}
+
+fn new() -> Queue {
+    let q: Queue = Queue;
+    return q;
+}

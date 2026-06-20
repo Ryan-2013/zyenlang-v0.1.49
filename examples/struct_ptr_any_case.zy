@@ -1,0 +1,24 @@
+struct Dog {
+    let this.age: int;
+    let this.name: str;
+
+    fn berk() -> void {
+        print("woof");
+        print(f"my age is {this.age}");
+    }
+}
+
+fn main() -> int {
+    let *a: ptr<int> = 1;
+    let dog: Dog = Dog { age: 5, name: "Rex" };
+
+    dog.berk();
+
+    let *b: ptr = 12;
+    let c: ptr;
+
+    set *b = c;
+    print(*b);
+
+    return 0;
+}

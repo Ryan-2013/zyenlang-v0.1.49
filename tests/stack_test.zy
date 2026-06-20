@@ -1,0 +1,21 @@
+import <std/test>;
+import <std/stack>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/stack");
+    let s: Stack = stack.new();
+    t.eq_bool("empty", s.is_empty(), true);
+    s.push_str("first");
+    s.push_str("second");
+    t.eq_int("len", s.len(), 2);
+    t.eq_str("peek", s.peek_str(), "second");
+    t.eq_str("pop second", s.pop_str(), "second");
+    t.eq_str("pop first", s.pop_str(), "first");
+    t.eq_bool("empty again", s.is_empty(), true);
+    s.push_int(10);
+    s.push_int(20);
+    t.eq_int("pop int", s.pop_int(), 20);
+    s.clear();
+    t.eq_int("clear", s.len(), 0);
+    return t.summary();
+}

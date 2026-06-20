@@ -1,0 +1,22 @@
+fn main() -> int {
+    let i: int = 12;
+    let s: str = (str)i;
+    print(s);
+
+    let t: str = "34";
+    let n: int = (int)t;
+    print(n + 1);
+
+    let f: float = (float)i;
+    print(f);
+
+    let b: bool = (bool)i;
+    print(b);
+
+    let list: List = List;
+    list.append(123);
+    let x: str = (str)list.get(0);
+    print(x);
+
+    return 0;
+}

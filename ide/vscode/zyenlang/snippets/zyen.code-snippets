@@ -1,0 +1,387 @@
+{
+  "main function": {
+    "prefix": "main",
+    "body": [
+      "fn main() -> int {",
+      "    ${1:print(\"Hello Zyen\");}",
+      "    return 0;",
+      "}"
+    ],
+    "description": "Create fn main() -> int"
+  },
+  "function": {
+    "prefix": "fn",
+    "body": [
+      "fn ${1:name}(${2:arg: int}) -> ${3:int} {",
+      "    ${4:return arg;}",
+      "}"
+    ],
+    "description": "Create a typed function"
+  },
+  "void function": {
+    "prefix": "fnv",
+    "body": [
+      "fn ${1:name}(${2:arg: int}) {",
+      "    ${3:print(arg);}",
+      "}"
+    ],
+    "description": "Create a void function"
+  },
+  "let variable": {
+    "prefix": "let",
+    "body": "let ${1:name}: ${2:int} = ${3:0};",
+    "description": "Declare a typed variable"
+  },
+  "const value": {
+    "prefix": "const",
+    "body": "const ${1:name}: ${2:int} = ${3:0};",
+    "description": "Declare a typed constant"
+  },
+  "set variable": {
+    "prefix": "set",
+    "body": "set ${1:name} = ${2:value};",
+    "description": "Assign an existing variable"
+  },
+  "set compound": {
+    "prefix": "setop",
+    "body": "set ${1:name} ${2|+=,-=,*=,/=|} ${3:value};",
+    "description": "Explicit compound assignment"
+  },
+  "if else": {
+    "prefix": "if",
+    "body": [
+      "if (${1:condition}) {",
+      "    ${2:pass;}",
+      "} else {",
+      "    ${3:pass;}",
+      "}"
+    ],
+    "description": "Create if / else block with parentheses"
+  },
+  "for loop": {
+    "prefix": "for",
+    "body": [
+      "for (let ${1:i} = ${2:0}; ${1:i} < ${3:10}; ${1:i}++) {",
+      "    ${4:print(${1:i});}",
+      "}"
+    ],
+    "description": "Create C-style for loop"
+  },
+  "infinite for": {
+    "prefix": "forinf",
+    "body": [
+      "for (;;) {",
+      "    ${1:pass;}",
+      "}"
+    ],
+    "description": "Create infinite for loop"
+  },
+  "struct": {
+    "prefix": "struct",
+    "body": [
+      "struct ${1:Name} {",
+      "    let this.${2:value}: ${3:int};",
+      "}"
+    ],
+    "description": "Create a struct"
+  },
+  "struct literal": {
+    "prefix": "newstruct",
+    "body": "let ${1:name}: ${2:Type} = ${2:Type} { ${3:field}: ${4:value} };",
+    "description": "Create a struct literal"
+  },
+  "import user file": {
+    "prefix": "importfile",
+    "body": "import \"${1:lib/name.zy}\";",
+    "description": "Import user .zy file into global namespace"
+  },
+  "import user file alias": {
+    "prefix": "importfileas",
+    "body": "import \"${1:lib/name.zy}\" as ${2:name};",
+    "description": "Import user .zy file with namespace alias"
+  },
+  "import std": {
+    "prefix": "importstd",
+    "body": "import <std/${1:math}>;",
+    "description": "Import standard library module"
+  },
+  "import std alias": {
+    "prefix": "importas",
+    "body": "import <std/${1:math}> as ${2:m};",
+    "description": "Import standard library module with alias"
+  },
+  "import prelude": {
+    "prefix": "prelude",
+    "body": "import <std/prelude>;",
+    "description": "Import standard prelude"
+  },
+  "print": {
+    "prefix": "print",
+    "body": "print(${1:value});",
+    "description": "Print value"
+  },
+  "stop": {
+    "prefix": "stop",
+    "body": "stop \"${1:error message}\";",
+    "description": "Stop program with error"
+  },
+  "pass": {
+    "prefix": "pass",
+    "body": "pass;",
+    "description": "Empty statement"
+  },
+  "break": {
+    "prefix": "break",
+    "body": "break;",
+    "description": "Break out of for loop"
+  },
+  "pointer": {
+    "prefix": "ptr",
+    "body": [
+      "let ${1:value}: ${2:int} = ${3:100};",
+      "let ${4:p}: ptr<${2:int}> = &${1:value};",
+      "print(${4:p}[0]);"
+    ],
+    "description": "Create pointer object"
+  },
+  "none pointer": {
+    "prefix": "ptrnone",
+    "body": [
+      "let ${1:p}: ptr<${2:int}>;",
+      "let ${3:value}: ${2:int} = ${4:1};",
+      "set ${1:p} = &${3:value};",
+      "print(*${1:p});"
+    ],
+    "description": "Declare ptr as None, then assign address"
+  },
+  "owned pointer value": {
+    "prefix": "ptrval",
+    "body": [
+      "let *${1:a}: ptr<${2:int}> = ${3:1};",
+      "set *${1:a} = ${4:2};",
+      "print(*${1:a});"
+    ],
+    "description": "Create ptr with hidden storage and write through deref"
+  },
+  "struct method": {
+    "prefix": "structmethod",
+    "body": [
+      "struct ${1:Name} {",
+      "    let this.${2:value}: ${3:int};",
+      "",
+      "    fn ${4:method}(${5:data: int}) -> ${6:void} {",
+      "        ${7:pass;}",
+      "    }",
+      "}"
+    ],
+    "description": "Create struct with method"
+  },
+  "cmd run": {
+    "prefix": "cmdrun",
+    "body": [
+      "import <std/cmd>;",
+      "",
+      "fn main() -> int {",
+      "    let code: int = cmd.run(\"${1:echo hello}\");",
+      "    print(code);",
+      "    return code;",
+      "}"
+    ],
+    "description": "Run command line command"
+  },
+  "this field": {
+    "prefix": "thisfield",
+    "body": "let this.${1:name}: ${2:int};",
+    "description": "Declare a struct field on this"
+  },
+  "this set": {
+    "prefix": "setthis",
+    "body": "set this.${1:field} = ${2:value};",
+    "description": "Set current struct field inside a method"
+  },
+  "list": {
+    "prefix": "list",
+    "body": [
+      "let ${1:list}: List = List;",
+      "${1:list}.append(${2:1});",
+      "print(${1:list}.get(${3:0}));"
+    ],
+    "description": "Create and use a List"
+  },
+  "list append": {
+    "prefix": "append",
+    "body": "${1:list}.append(${2:value});",
+    "description": "Append a value to List"
+  },
+  "list get": {
+    "prefix": "get",
+    "body": "${1:list}.get(${2:index})",
+    "description": "Get a value from List"
+  },
+  "cast to string": {
+    "prefix": "caststr",
+    "body": "let ${1:s}: str = (str)${2:value};",
+    "description": "Cast a value to str"
+  },
+  "cast value": {
+    "prefix": "cast",
+    "body": "(${1:str})${2:value}",
+    "description": "C-like cast: (str)value, (int)value, (float)value, (bool)value"
+  },
+  "import cv": {
+    "prefix": "importcv",
+    "body": "import <std/cv>;",
+    "description": "Import computer vision bridge module"
+  },
+  "cv gray": {
+    "prefix": "cvgray",
+    "body": [
+      "import <std/cv>;",
+      "",
+      "fn main() -> int {",
+      "    cv.info();",
+      "    let code: int = cv.gray(\"${1:input.png}\", \"${2:gray.png}\");",
+      "    print(code);",
+      "    return code;",
+      "}"
+    ],
+    "description": "Convert image to grayscale with cv.gray"
+  },
+  "cv pipeline": {
+    "prefix": "cvpipe",
+    "body": [
+      "import <std/cv>;",
+      "",
+      "fn main() -> int {",
+      "    cv.require_ok(cv.resize(\"${1:input.png}\", \"${2:build/resized.png}\", ${3:320}, ${4:240}));",
+      "    cv.require_ok(cv.gray(\"${2:build/resized.png}\", \"${5:build/gray.png}\"));",
+      "    cv.require_ok(cv.canny(\"${2:build/resized.png}\", \"${6:build/edge.png}\", ${7:80}, ${8:160}));",
+      "    return 0;",
+      "}"
+    ],
+    "description": "Basic OpenCV-style image pipeline"
+  },
+  "import gpu": {
+    "prefix": "importgpu",
+    "body": "import <std/gpu>;",
+    "description": "Import GPU bridge module"
+  },
+  "gpu info": {
+    "prefix": "gpuinfo",
+    "body": [
+      "import <std/gpu>;",
+      "",
+      "fn main() -> int {",
+      "    gpu.info();",
+      "    if (gpu.has_torch_cuda()) {",
+      "        print(\"torch cuda ok\");",
+      "    } else {",
+      "        print(\"torch cuda not available\");",
+      "    }",
+      "    return 0;",
+      "}"
+    ],
+    "description": "Print GPU availability info"
+  },
+  "pointer object constructor": {
+    "prefix": "ptrobj",
+    "body": [
+      "let ${1:a}: ptr;",
+      "let ${2:b} = ptr;",
+      "set *${1:a} = ${2:b};",
+      "set *${2:b} = ${3:5};",
+      "print(*${2:b});"
+    ],
+    "description": "Create None ptr objects and lazily write through deref"
+  },
+  "import std mem": {
+    "prefix": "impmem",
+    "body": "import <std/mem>;",
+    "description": "Import std/mem memory-control module"
+  },
+  "memory alloc int": {
+    "prefix": "memint",
+    "body": "let ${1:p}: ptr<int> = mem.alloc_int(${2:0});",
+    "description": "Allocate managed int memory"
+  },
+  "memory free": {
+    "prefix": "memfree",
+    "body": "mem.free(${1:p});",
+    "description": "Free managed pointer memory"
+  },
+  "memory valid": {
+    "prefix": "memvalid",
+    "body": "mem.is_valid(${1:p})",
+    "description": "Check if a pointer is valid"
+  },
+  "f-string": {
+    "prefix": "fstr",
+    "body": "f\"${1:name}={${2:value}}\"",
+    "description": "Create a ZyenLang f-string"
+  },
+  "perf monitor imports": {
+    "prefix": "perfimports",
+    "body": [
+      "import <std/cmd>;",
+      "import <std/gpu>;",
+      "import <std/mem>;",
+      "import <std/time>;"
+    ],
+    "description": "Import CLI performance monitor modules"
+  },
+  "import fs/term": {
+    "prefix": "impfsterm",
+    "body": [
+      "import <std/fs>;",
+      "import <std/term>;"
+    ],
+    "description": "Import fs and term modules"
+  },
+  "term input": {
+    "prefix": "terminput",
+    "body": "let ${1:value}: str = term.input(\"${2:prompt> }\");",
+    "description": "Read terminal input"
+  },
+  "fs read": {
+    "prefix": "fsread",
+    "body": "let ${1:text}: str = fs.read(${2:path});",
+    "description": "Read a file into a string"
+  },
+  "zy ide main": {
+    "prefix": "zyide",
+    "body": [
+      "import <std/term>;",
+      "import <std/fs>;",
+      "import <std/cmd>;",
+      "",
+      "fn main() -> int {",
+      "    let file: str = term.input(\"Zy file path> \");",
+      "    if (fs.exists(file)) {",
+      "        cmd.run(f\"zy check {file}\");",
+      "    }",
+      "    return 0;",
+      "}"
+    ],
+    "description": "Small Zy CLI IDE starter"
+  },
+  "Import std/tk": {
+    "prefix": "importtk",
+    "body": "import <std/tk>;",
+    "description": "Import std/tk Tk-like GUI/canvas module"
+  },
+  "TK demo window": {
+    "prefix": "tkdemo",
+    "body": [
+      "import <std/tk>;",
+      "",
+      "fn main() -> int {",
+      "    tk.open(\"${1:Zyen TK}\", ${2:800}, ${3:480});",
+      "    tk.bg(\"#111111\");",
+      "    tk.rect(${4:40}, ${5:40}, ${6:120}, ${7:80}, \"#ff8800\");",
+      "    tk.text(${8:40}, ${9:150}, \"${10:Hello TK}\", \"#ffffff\", ${11:18});",
+      "    return tk.show();",
+      "}"
+    ],
+    "description": "Create a simple TK-like ZyenLang window"
+  }
+}

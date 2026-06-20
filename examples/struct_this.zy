@@ -1,0 +1,28 @@
+struct Bag {
+    let this.list_len: int;
+
+    fn append_int(data: int) -> void {
+        set this.list_len = this.list_len + 1;
+        print(data);
+    }
+
+    fn append_str(data: str) -> void {
+        set this.list_len = this.list_len + 1;
+        print(data);
+    }
+
+    fn len() -> int {
+        return this.list_len;
+    }
+}
+
+fn main() -> int {
+    let bag: Bag = Bag;
+
+    bag.append_int(1);
+    bag.append_str("Zyen");
+
+    print(bag.len());
+
+    return 0;
+}

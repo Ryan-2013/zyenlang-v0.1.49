@@ -1,0 +1,14 @@
+import <std/mem>;
+
+fn main() -> int {
+    let p = ptr<int>;
+
+    set *p = 7;
+    print(*p);
+    print(mem.is_owned(p));
+
+    mem.free(p);
+    print(mem.is_valid(p));
+
+    return 0;
+}

@@ -1,0 +1,35 @@
+import <std/test>;
+import <std/list>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/list");
+    let xs: List;
+    xs.append("a");
+    xs.append("b");
+    xs.append("c");
+    t.eq_int("len", list.len(xs), 3);
+    t.eq_bool("not empty", list.is_empty(xs), false);
+    t.eq_str("join", list.join_str(xs, ":"), "a:b:c");
+    t.eq_bool("contains b", list.contains_str(xs, "b"), true);
+    t.eq_int("index c", list.index_of_str(xs, "c"), 2);
+    let cp: List = list.copy(xs);
+    t.eq_str("copy item", (str)cp.get(1), "b");
+    let rev: List = list.reverse(xs);
+    t.eq_str("reverse first", (str)rev.get(0), "c");
+    let sl: List = list.slice(xs, 1, 2);
+    t.eq_int("slice len", sl.len(), 2);
+    t.eq_str("slice first", (str)sl.get(0), "b");
+    let wo: List = list.without_at(xs, 1);
+    t.eq_str("without join", list.join_str(wo, ","), "a,c");
+    let more: List;
+    more.append("d");
+    more.append("e");
+    list.append_all(xs, more);
+    t.eq_str("append all", list.join_str(xs, ","), "a,b,c,d,e");
+    let nums: List;
+    nums.append(10);
+    nums.append(20);
+    t.eq_bool("contains int", list.contains_int(nums, 20), true);
+    t.eq_int("index int", list.index_of_int(nums, 10), 0);
+    return t.summary();
+}

@@ -1,0 +1,6 @@
+fn main() -> int {
+    let chars = [65, "x"];
+    print("first=" + (str)chars.get(0));
+    print("second=" + (str)chars.get(1));
+    return 0;
+}

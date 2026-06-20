@@ -1,0 +1,35 @@
+// ZyenLang deterministic random helpers v0.1.6
+// Pure functions: pass a seed, get deterministic values.
+import <std/math>;
+
+fn next_seed(seed: int) -> int {
+    return (seed * 1103515245 + 12345) & 2147483647;
+}
+
+fn next_positive(seed: int) -> int {
+    let s: int = next_seed(seed);
+    if (s < 0) {
+        return 0 - s;
+    }
+    return s;
+}
+
+fn range_int(seed: int, lo: int, hi: int) -> int {
+    if (hi < lo) {
+        stop "random.range_int expects hi >= lo";
+    }
+    let width: int = hi - lo + 1;
+    return lo + (next_positive(seed) % width);
+}
+
+fn unit_float(seed: int) -> float {
+    return (next_positive(seed) % 1000000) / 1000000.0;
+}
+
+fn range_float(seed: int, lo: float, hi: float) -> float {
+    return math.lerp_float(lo, hi, unit_float(seed));
+}
+
+fn chance(seed: int, probability: float) -> bool {
+    return unit_float(seed) < probability;
+}

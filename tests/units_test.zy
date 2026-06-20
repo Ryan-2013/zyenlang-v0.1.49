@@ -1,0 +1,12 @@
+import <std/test>;
+import <std/units>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/units");
+    t.eq_float("deg rad", units.deg_to_rad(180.0), 3.141592653589793, 0.0001);
+    t.eq_float("rad deg", units.rad_to_deg(3.141592653589793), 180.0, 0.0001);
+    t.eq_float("mm m", units.mm_to_m(1000.0), 1.0, 0.0001);
+    t.eq_float("m mm", units.m_to_mm(1.5), 1500.0, 0.0001);
+    t.eq_float("ms s", units.ms_to_s(500.0), 0.5, 0.0001);
+    return t.summary();
+}

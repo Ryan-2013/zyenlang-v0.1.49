@@ -1,0 +1,52 @@
+// Explicit memory-control module.
+// Usage:
+//   import <std/mem>;
+//   let p: ptr<int> = mem.alloc_int(0);
+//   set *p = 5;
+//   mem.free(p);
+
+fn alloc_int(value: int) -> ptr<int> {
+    return zl_mem_alloc_int(value);
+}
+
+fn alloc_float(value: float) -> ptr<float> {
+    return zl_mem_alloc_float(value);
+}
+
+fn alloc_bool(value: bool) -> ptr<bool> {
+    return zl_mem_alloc_bool(value);
+}
+
+fn alloc_str(value: str) -> ptr<str> {
+    return zl_mem_alloc_str(value);
+}
+
+fn alloc_any(value: Any) -> ptr<Any> {
+    return zl_mem_alloc_any(value);
+}
+
+fn free(p: ptr) -> int {
+    return zl_mem_free(p);
+}
+
+fn is_valid(p: ptr) -> bool {
+    return zl_mem_is_valid(p);
+}
+
+fn is_none(p: ptr) -> bool {
+    return zl_mem_is_none(p);
+}
+
+fn is_owned(p: ptr) -> bool {
+    return zl_mem_is_owned(p);
+}
+
+fn type_name(p: ptr) -> str {
+    return zl_mem_type(p);
+}
+
+fn require_valid(p: ptr) -> void {
+    if (!zl_mem_is_valid(p)) {
+        stop "invalid pointer";
+    }
+}

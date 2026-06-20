@@ -1,0 +1,68 @@
+// ZyenLang std/csv v0.1.47
+// Simple CSV helpers. split_line supports quoted fields, commas inside quotes, and doubled quotes.
+import <std/string>;
+import <std/fs>;
+import <std/text>;
+
+fn split_line(line: str) -> List {
+    let fields: List;
+    let field: str = "";
+    let in_quote: bool = false;
+    let quote: int = 34;
+    let comma: int = 44;
+    for (let i: int = 0; i < string.len(line); i += 1) {
+        let c: int = line[i];
+        if (c == quote) {
+            if (in_quote && i + 1 < string.len(line) && line[i + 1] == quote) {
+                set field += string.char(quote);
+                set i += 1;
+            } else {
+                set in_quote = !in_quote;
+            }
+        } else if (c == comma && !in_quote) {
+            fields.append(field);
+            set field = "";
+        } else {
+            set field += string.char(c);
+        }
+    }
+    fields.append(field);
+    return fields;
+}
+
+fn needs_quote(value: str) -> bool {
+    return string.contains(value, ",") || string.contains(value, string.char(34)) || string.contains(value, string.char(10)) || string.contains(value, string.char(13));
+}
+
+fn escape_field(value: str) -> str {
+    let q: str = string.char(34);
+    if (!needs_quote(value)) {
+        return value;
+    }
+    return q + string.replace(value, q, q + q) + q;
+}
+
+fn join_line(values: List) -> str {
+    let out: str = "";
+    for (let i: int = 0; i < values.len(); i += 1) {
+        if (i > 0) {
+            set out += ",";
+        }
+        set out += escape_field((str)values.get(i));
+    }
+    return out;
+}
+
+fn read_lines(path: str) -> List {
+    let rows: List;
+    let content: str = fs.read(path);
+    let n: int = text.line_count(content);
+    for (let i: int = 0; i < n; i += 1) {
+        rows.append(text.get_line(content, i));
+    }
+    return rows;
+}
+
+fn write_lines(path: str, rows: List) -> int {
+    return fs.write(path, text.join_lines(rows));
+}

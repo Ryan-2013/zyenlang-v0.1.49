@@ -1,0 +1,11 @@
+fn main() -> int {
+    let score: int = 80;
+    if (score >= 90) {
+        print("A");
+    } else if (score >= 80) {
+        print("B");
+    } else {
+        print("C");
+    }
+    return 0;
+}

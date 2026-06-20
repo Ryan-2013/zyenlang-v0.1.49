@@ -1,0 +1,12 @@
+import <std/string>;
+
+fn main() -> int {
+    let s: str = "  Zyen Lang  ";
+    print(string.trim(s));
+    print(string.lower("ABC"));
+    print(string.upper("abc"));
+    print(string.repeat("ha", 3));
+    print(string.replace("a-b-c", "-", ":"));
+    print(string.reverse("abc"));
+    return 0;
+}

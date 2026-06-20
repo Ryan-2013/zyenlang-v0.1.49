@@ -1,0 +1,18 @@
+import <std/test>;
+import <std/thread>;
+import <std/time>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/thread");
+
+    t.check("cpu_count >= 1", thread.cpu_count() >= 1);
+
+    let start: int = time.clock_ms();
+    thread.sleep_ms(1);
+    let elapsed: int = time.clock_ms() - start;
+    t.check("sleep_ms returns", elapsed >= 0);
+
+    t.eq_int("yield_now returns 0", thread.yield_now(), 0);
+
+    return t.summary();
+}

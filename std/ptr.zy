@@ -1,0 +1,22 @@
+// ZyenLang ptr helpers v0.1.6
+import <std/string>;
+
+fn is_null(p: ptr) -> bool {
+    return p.addr == 0;
+}
+
+fn not_null(p: ptr) -> bool {
+    return p.addr != 0;
+}
+
+fn same(a: ptr, b: ptr) -> bool {
+    return a.addr == b.addr;
+}
+
+fn type_name(p: ptr) -> str {
+    return p.type_name;
+}
+
+fn is_type(p: ptr, name: str) -> bool {
+    return string.eq(p.type_name, name);
+}

@@ -1,0 +1,21 @@
+import <std/test>;
+import <std/coroutine>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/coroutine");
+    let c: Coro = coroutine.new();
+
+    t.eq_int("initial step", c.current(), 0);
+    t.eq_bool("initial not done", c.is_done(), false);
+    t.eq_int("next returns old step", c.next(), 0);
+    t.eq_int("step advanced", c.current(), 1);
+    c.jump(10);
+    t.eq_int("jump", c.current(), 10);
+    c.finish();
+    t.eq_bool("finish", c.is_done(), true);
+    c.reset();
+    t.eq_int("reset step", c.current(), 0);
+    t.eq_bool("reset done", c.is_done(), false);
+
+    return t.summary();
+}

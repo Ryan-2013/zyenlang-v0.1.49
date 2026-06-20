@@ -1,0 +1,13 @@
+fn main() -> int {
+    let hit: int = 0;
+
+    for (let i = 0; i < 10; i++) {
+        if (i == 4) {
+            set hit = i;
+            break;
+        }
+    }
+
+    print(hit);
+    return 0;
+}

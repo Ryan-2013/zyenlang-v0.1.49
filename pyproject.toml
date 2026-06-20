@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zyenlang"
+version = "0.1.49"
+description = "ZyenLang: a concise C-like language transpiled to C"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "ZyenLang"}]
+
+[project.scripts]
+zy = "zyenlang.transpiler:main"
+zyen = "zyenlang.transpiler:main"
+
+[tool.setuptools]
+packages = ["zyenlang"]
+
+[tool.setuptools.package-data]
+zyenlang = ["std/*.zy"]

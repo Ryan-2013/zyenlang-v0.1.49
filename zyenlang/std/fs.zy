@@ -1,0 +1,48 @@
+// File-system helper module for simple tools.
+// Usage:
+//   import <std/fs>;
+//   if (fs.exists("main.zy")) { print(fs.read("main.zy")); }
+
+fn exists(path: str) -> bool {
+    return zl_fs_exists(path);
+}
+
+fn read(path: str) -> str {
+    return zl_fs_read(path);
+}
+
+fn write(path: str, text: str) -> int {
+    return zl_fs_write(path, text);
+}
+
+fn append(path: str, text: str) -> int {
+    return zl_fs_append(path, text);
+}
+
+fn basename(path: str) -> str {
+    return zl_path_basename(path);
+}
+
+fn dirname(path: str) -> str {
+    return zl_path_dirname(path);
+}
+
+fn extension(path: str) -> str {
+    return zl_path_ext(path);
+}
+
+fn join(a: str, b: str) -> str {
+    return zl_path_join(a, b);
+}
+
+fn list(path: str) -> List {
+    return zl_fs_list_dir(path);
+}
+
+fn mkdir(path: str) -> int {
+    return zl_fs_mkdir(path);
+}
+
+fn is_dir(path: str) -> bool {
+    return zl_fs_is_dir(path);
+}

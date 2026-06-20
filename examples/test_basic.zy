@@ -1,0 +1,8 @@
+import <std/test>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("example");
+    t.eq_int("math", 1 + 1, 2);
+    t.eq_str("name", "Zyen", "Zyen");
+    return t.summary();
+}

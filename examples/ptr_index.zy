@@ -1,0 +1,12 @@
+import <std/buffer>;
+
+fn main() -> int {
+    let value: int = 10;
+    let p: ptr<int> = &value;
+
+    print(buffer.read_int_at(p, 0));
+    buffer.write_int_at(p, 0, 99);
+    print(value);
+
+    return 0;
+}

@@ -1,0 +1,11 @@
+import <std/string>;
+fn main() -> int {
+    let s: str = "a,b,c";
+    print(string.substring(s, 2, 1));
+    let parts: List = string.split(s, ",");
+    print(parts.len());
+    print(parts.get(1));
+    print(string.char(65));
+    print((char)66);
+    return 0;
+}

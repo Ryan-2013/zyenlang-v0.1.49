@@ -1,0 +1,94 @@
+// ZyenLang geometry helpers v0.1.6
+import <std/math>;
+
+struct Point2 {
+    let this.x: float;
+    let this.y: float;
+}
+
+struct Rect {
+    let this.x: float;
+    let this.y: float;
+    let this.w: float;
+    let this.h: float;
+}
+
+fn point2(x: float, y: float) -> Point2 {
+    return Point2 { x: x, y: y };
+}
+
+fn rect(x: float, y: float, w: float, h: float) -> Rect {
+    return Rect { x: x, y: y, w: w, h: h };
+}
+
+fn add(a: Point2, b: Point2) -> Point2 {
+    return Point2 { x: a.x + b.x, y: a.y + b.y };
+}
+
+fn sub(a: Point2, b: Point2) -> Point2 {
+    return Point2 { x: a.x - b.x, y: a.y - b.y };
+}
+
+fn scale(p: Point2, s: float) -> Point2 {
+    return Point2 { x: p.x * s, y: p.y * s };
+}
+
+fn dot(a: Point2, b: Point2) -> float {
+    return a.x * b.x + a.y * b.y;
+}
+
+fn cross(a: Point2, b: Point2) -> float {
+    return a.x * b.y - a.y * b.x;
+}
+
+fn length2(p: Point2) -> float {
+    return p.x * p.x + p.y * p.y;
+}
+
+fn length(p: Point2) -> float {
+    return math.sqrt_float(length2(p));
+}
+
+fn distance2(a: Point2, b: Point2) -> float {
+    return math.square_float(a.x - b.x) + math.square_float(a.y - b.y);
+}
+
+fn distance(a: Point2, b: Point2) -> float {
+    return math.sqrt_float(distance2(a, b));
+}
+
+fn manhattan(a: Point2, b: Point2) -> float {
+    return math.abs_float(a.x - b.x) + math.abs_float(a.y - b.y);
+}
+
+fn midpoint(a: Point2, b: Point2) -> Point2 {
+    return Point2 { x: (a.x + b.x) / 2.0, y: (a.y + b.y) / 2.0 };
+}
+
+fn rect_area(r: Rect) -> float {
+    return r.w * r.h;
+}
+
+fn rect_right(r: Rect) -> float {
+    return r.x + r.w;
+}
+
+fn rect_bottom(r: Rect) -> float {
+    return r.y + r.h;
+}
+
+fn rect_contains_point(r: Rect, p: Point2) -> bool {
+    return p.x >= r.x && p.x <= rect_right(r) && p.y >= r.y && p.y <= rect_bottom(r);
+}
+
+fn rect_overlap(a: Rect, b: Rect) -> bool {
+    return a.x <= rect_right(b) && b.x <= rect_right(a) && a.y <= rect_bottom(b) && b.y <= rect_bottom(a);
+}
+
+fn circle_area(radius: float) -> float {
+    return math.pi_float() * radius * radius;
+}
+
+fn circle_circumference(radius: float) -> float {
+    return math.tau_float() * radius;
+}

@@ -1,0 +1,12 @@
+import <gpu.zy> as gpu;
+
+fn main() -> int {
+    let x = 1212121212;
+    let y = (str)x;
+    const z = y;
+
+    print(y);
+    print(z);
+
+    return 0;
+}

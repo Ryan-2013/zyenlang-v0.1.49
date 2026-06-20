@@ -1,0 +1,14 @@
+import <std/string>;
+import <std/char>;
+
+fn main() -> int {
+    print(string.len("Zyen"));
+    print(string.eq("abc", "abc"));
+    print(string.starts_with("ZyenLang", "Zyen"));
+    print(string.ends_with("ZyenLang", "Lang"));
+    print(string.index_of("ZyenLang", "Lang"));
+    print(string.count_char("banana", 97));
+    print(char.to_upper(122));
+
+    return 0;
+}

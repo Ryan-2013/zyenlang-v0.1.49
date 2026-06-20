@@ -1,0 +1,56 @@
+// ZyenLang ptr/buffer helpers v0.1.15
+// Uses clean pointer indexing syntax. The C casts are handled by the backend.
+
+fn read_int(p: ptr<int>) -> int {
+    return *p;
+}
+
+fn write_int(p: ptr<int>, value: int) -> int {
+    set *p = value;
+    return value;
+}
+
+fn read_float(p: ptr<float>) -> float {
+    return *p;
+}
+
+fn write_float(p: ptr<float>, value: float) -> float {
+    set *p = value;
+    return value;
+}
+
+fn read_bool(p: ptr<bool>) -> bool {
+    return *p;
+}
+
+fn write_bool(p: ptr<bool>, value: bool) -> bool {
+    set *p = value;
+    return value;
+}
+
+fn read_int_at(p: ptr<int>, index: int) -> int {
+    return p[index];
+}
+
+fn write_int_at(p: ptr<int>, index: int, value: int) -> int {
+    set p[index] = value;
+    return value;
+}
+
+fn read_float_at(p: ptr<float>, index: int) -> float {
+    return p[index];
+}
+
+fn write_float_at(p: ptr<float>, index: int, value: float) -> float {
+    set p[index] = value;
+    return value;
+}
+
+fn read_bool_at(p: ptr<bool>, index: int) -> bool {
+    return p[index];
+}
+
+fn write_bool_at(p: ptr<bool>, index: int, value: bool) -> bool {
+    set p[index] = value;
+    return value;
+}

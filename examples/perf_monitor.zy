@@ -1,0 +1,89 @@
+import "perf_tools.zy" as tool;
+import <std/cmd>;
+import <std/gpu>;
+import <std/mem>;
+import <std/time>;
+import <std/math>;
+
+struct Sample {
+    let this.index: int;
+    let this.load: int;
+    let this.elapsed: int;
+    let this.gpu_ok: bool;
+
+    fn init(index: int, load: int, elapsed: int, gpu_ok: bool) -> void {
+        set this.index = index;
+        set this.load = load;
+        set this.elapsed = elapsed;
+        set this.gpu_ok = gpu_ok;
+    }
+
+    fn score() -> int {
+        return this.load + this.elapsed;
+    }
+
+    fn show(label: str) -> void {
+        print(f"{label} #{this.index}: load={this.load}, elapsed={this.elapsed}ms, gpu={this.gpu_ok}, score={this.score()}");
+    }
+}
+
+fn main() -> int {
+    print("ZyenLang CLI performance monitor");
+
+    gpu.info();
+    let gpu_ok: bool = gpu.has_nvidia();
+    print(f"gpu status: {tool.status(gpu_ok)}");
+
+    let rows: List = List;
+    let heap_score: ptr<int> = mem.alloc_int(0);
+    let lazy = ptr<int>;
+
+    set *lazy = 7;
+    print(f"lazy ptr value={*lazy}, valid={mem.is_valid(lazy)}, type={mem.type_name(lazy)}");
+
+    for (let i = 0; i < 5; i++) {
+        let start_ms: int = time.clock_ms();
+        let load: int = tool.load_score(3000 + i * 1000);
+        let end_ms: int = time.clock_ms();
+        let elapsed: int = math.max_int(end_ms - start_ms, 0);
+
+        set *heap_score = load + elapsed;
+
+        let s: Sample = Sample;
+        s.init(i, load, elapsed, gpu_ok);
+        s.show("sample");
+
+        let row_msg: str = f"row={i}, heap_score={*heap_score}, text_score={(str)*heap_score}";
+        rows.append(row_msg);
+        print(f"latest row: {rows.get(i)}");
+
+        if (i == 2) {
+            pass;
+        } else {
+            let shell_msg: str = f"echo monitor_tick_{i}";
+            cmd.run(shell_msg);
+        }
+
+        if (s.score() > 50000) {
+            print("score limit reached");
+            break;
+        }
+    }
+
+    print(f"rows captured={rows.len()}");
+
+    for (let j = 0; j < rows.len(); j++) {
+        print(f"table[{j}] = {rows.get(j)}");
+    }
+
+    let saved: bool = (bool)*heap_score;
+    print(f"final heap score={*heap_score}, bool_cast={saved}");
+
+    mem.free(heap_score);
+    print(f"heap valid after free={mem.is_valid(heap_score)}");
+
+    set lazy = None;
+    print(f"lazy after None={lazy}");
+
+    return 0;
+}

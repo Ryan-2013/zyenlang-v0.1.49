@@ -1,0 +1,21 @@
+import <std/test>;
+import <std/set>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/set");
+    let s: StringSet = set.new();
+    t.eq_bool("empty", s.is_empty(), true);
+    t.eq_bool("add a", s.add("a"), true);
+    t.eq_bool("add duplicate", s.add("a"), false);
+    t.eq_bool("has a", s.has("a"), true);
+    t.eq_int("len one", s.len(), 1);
+    s.add("b");
+    let vals: List = s.values();
+    t.eq_int("values len", vals.len(), 2);
+    t.eq_bool("remove a", s.remove("a"), true);
+    t.eq_bool("no a", s.has("a"), false);
+    t.eq_bool("remove missing", s.remove("x"), false);
+    s.clear();
+    t.eq_bool("clear", s.is_empty(), true);
+    return t.summary();
+}

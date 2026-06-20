@@ -1,0 +1,22 @@
+import <std/test>;
+import <std/fs>;
+import <std/string>;
+import <std/gpu>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/gpu compute csv");
+
+    fs.write("zy_gpu_a.csv", "1,2,3\n");
+    fs.write("zy_gpu_b.csv", "10,20,30\n");
+
+    t.eq_int("vector add exit", gpu.vector_add_csv("zy_gpu_a.csv", "zy_gpu_b.csv", "zy_gpu_add.csv"), 0);
+    t.eq_str("vector add output", string.trim(fs.read("zy_gpu_add.csv")), "11.0,22.0,33.0");
+
+    t.eq_int("vector scale exit", gpu.vector_scale_csv("zy_gpu_a.csv", 2.0, "zy_gpu_scale.csv"), 0);
+    t.eq_str("vector scale output", string.trim(fs.read("zy_gpu_scale.csv")), "2.0,4.0,6.0");
+
+    t.eq_int("dot exit", gpu.dot_csv("zy_gpu_a.csv", "zy_gpu_b.csv", "zy_gpu_dot.txt"), 0);
+    t.eq_str("dot output", string.trim(fs.read("zy_gpu_dot.txt")), "140");
+
+    return t.summary();
+}

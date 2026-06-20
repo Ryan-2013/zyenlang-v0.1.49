@@ -1,0 +1,8 @@
+import <std/string>;
+fn main() -> int {
+    let x: str = "f";
+    if (string.eq(x, "f")) {
+        print("ok-f");
+    }
+    return 0;
+}

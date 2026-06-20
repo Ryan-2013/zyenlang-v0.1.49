@@ -1,0 +1,20 @@
+import <std/tk>;
+import <std/time>;
+
+fn main() -> int {
+    tk.open("Zyen GUI base", 720, 420);
+    tk.bg("#14161a");
+    tk.text(24, 20, "ZyenLang lowest-level GUI canvas", "#ffffff", 22);
+
+    for (let i = 0; i < 8; i++) {
+        let x: int = 40 + i * 80;
+        let y: int = 90 + i * 12;
+        tk.circle(x, y, 24, "#ff8800");
+        tk.text(x - 14, y + 36, f"{i}", "#ffffff", 14);
+    }
+
+    tk.rect_outline(24, 300, 672, 80, "#55ff99", 3);
+    tk.text(42, 324, "This is the base layer for future game-engine tools.", "#55ff99", 16);
+
+    return tk.show();
+}

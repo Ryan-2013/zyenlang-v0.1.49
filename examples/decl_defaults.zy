@@ -1,0 +1,29 @@
+struct Dog {
+    let this.age: int;
+    let this.name: str;
+
+    fn bark() -> void {
+        print("age=" + (str)this.age);
+        print("name=" + this.name);
+    }
+}
+
+fn main() -> int {
+    let a: int;
+    let b: float;
+    let c: bool;
+    let s: str;
+    let p: ptr<int>;
+    let xs: List;
+    let dog: Dog;
+
+    print(a);
+    print(b);
+    print(c);
+    print(s);
+    print(p);
+    print(xs.len());
+    dog.bark();
+
+    return 0;
+}

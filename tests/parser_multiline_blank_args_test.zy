@@ -1,0 +1,31 @@
+import <std/test>;
+
+fn add(a: int, b: int) -> int {
+    return a + b;
+}
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("parser multiline blank args");
+
+    let x: int = add(
+        10,
+
+        20
+    );
+
+    t.eq_int("add(a blank line b)", x, 30);
+
+    let y: int = add(
+        add(
+            1,
+
+            2
+        ),
+
+        3
+    );
+
+    t.eq_int("nested multiline call with blank lines", y, 6);
+
+    return t.summary();
+}

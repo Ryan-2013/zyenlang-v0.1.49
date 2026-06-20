@@ -1,0 +1,96 @@
+// ZyenLang std/config v0.1.47
+// Simple key=value config parser. Supports blank lines and # comments.
+import <std/string>;
+import <std/text>;
+
+fn is_comment(line: str) -> bool {
+    let t: str = string.trim(line);
+    if (string.len(t) == 0) {
+        return false;
+    }
+    return t[0] == 35;
+}
+
+fn line_key(line: str) -> str {
+    let t: str = string.trim(line);
+    let pos: int = string.index_of(t, "=");
+    if (pos < 0) {
+        return "";
+    }
+    return string.trim(string.substring(t, 0, pos));
+}
+
+fn line_value(line: str) -> str {
+    let t: str = string.trim(line);
+    let pos: int = string.index_of(t, "=");
+    if (pos < 0) {
+        return "";
+    }
+    return string.trim(string.substring(t, pos + 1, string.len(t) - pos - 1));
+}
+
+fn has_key(config_text: str, key: str) -> bool {
+    let n: int = text.line_count(config_text);
+    for (let i: int = 0; i < n; i += 1) {
+        let line: str = text.get_line(config_text, i);
+        if (!text.is_blank(line) && !is_comment(line)) {
+            if (string.eq(line_key(line), key)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+fn get_str(config_text: str, key: str, default_value: str) -> str {
+    let n: int = text.line_count(config_text);
+    for (let i: int = 0; i < n; i += 1) {
+        let line: str = text.get_line(config_text, i);
+        if (!text.is_blank(line) && !is_comment(line)) {
+            if (string.eq(line_key(line), key)) {
+                return line_value(line);
+            }
+        }
+    }
+    return default_value;
+}
+
+fn get_int(config_text: str, key: str, default_value: int) -> int {
+    if (!has_key(config_text, key)) {
+        return default_value;
+    }
+    return (int)get_str(config_text, key, (str)default_value);
+}
+
+fn get_bool(config_text: str, key: str, default_value: bool) -> bool {
+    if (!has_key(config_text, key)) {
+        return default_value;
+    }
+    let v: str = string.lower(get_str(config_text, key, ""));
+    if (string.eq(v, "true") || string.eq(v, "1") || string.eq(v, "yes") || string.eq(v, "on")) {
+        return true;
+    }
+    if (string.eq(v, "false") || string.eq(v, "0") || string.eq(v, "no") || string.eq(v, "off")) {
+        return false;
+    }
+    return default_value;
+}
+
+fn set(config_text: str, key: str, value: str) -> str {
+    let n: int = text.line_count(config_text);
+    let lines: List;
+    let found: bool = false;
+    for (let i: int = 0; i < n; i += 1) {
+        let line: str = text.get_line(config_text, i);
+        if (!found && !text.is_blank(line) && !is_comment(line) && string.eq(line_key(line), key)) {
+            lines.append(key + "=" + value);
+            set found = true;
+        } else {
+            lines.append(line);
+        }
+    }
+    if (!found) {
+        lines.append(key + "=" + value);
+    }
+    return text.join_lines(lines);
+}

@@ -1,0 +1,68 @@
+import <std/cmd>;
+import <std/fs>;
+import <std/term>;
+
+fn banner() -> void {
+    term.line();
+    print("ZyenLang CLI IDE");
+    term.line();
+}
+
+fn show_menu(file: str) -> void {
+    print(f"Current file: {file}");
+    print("1) check");
+    print("2) run");
+    print("3) build C");
+    print("4) build exe");
+    print("5) show source");
+    print("6) change file");
+    print("0) exit");
+}
+
+fn check_file(file: str) -> int {
+    if (fs.exists(file)) {
+        return cmd.run(f"zy check {file}");
+    } else {
+        print(f"file not found: {file}");
+        return -1;
+    }
+}
+
+fn run_file(file: str) -> int {
+    if (fs.exists(file)) {
+        return cmd.run(f"zy run {file}");
+    } else {
+        print(f"file not found: {file}");
+        return -1;
+    }
+}
+
+fn build_c(file: str) -> int {
+    if (fs.exists(file)) {
+        return cmd.run(f"zy build {file} -o build/zyide_output.c");
+    } else {
+        print(f"file not found: {file}");
+        return -1;
+    }
+}
+
+fn build_exe(file: str) -> int {
+    if (fs.exists(file)) {
+        return cmd.run(f"zy build {file} -o build/zyide_output.exe");
+    } else {
+        print(f"file not found: {file}");
+        return -1;
+    }
+}
+
+fn show_source(file: str) -> int {
+    if (fs.exists(file)) {
+        term.line();
+        print(fs.read(file));
+        term.line();
+        return 0;
+    } else {
+        print(f"file not found: {file}");
+        return -1;
+    }
+}

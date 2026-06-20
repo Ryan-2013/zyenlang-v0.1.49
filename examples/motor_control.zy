@@ -1,0 +1,26 @@
+struct Motor {
+    let this.rpm: int;
+    let this.pwm: int;
+    let this.enable: bool;
+}
+
+fn control(target: int, current: int) -> int {
+    let error: int = target - current;
+    let pwm: int = 0;
+
+    if (error > 0) {
+        set pwm = pwm + 1;
+    } else {
+        set pwm = pwm - 1;
+    }
+
+    return pwm;
+}
+
+fn main() -> int {
+    let m: Motor = Motor { rpm: 2800, pwm: 0, enable: true };
+    let next_pwm: int = control(3000, m.rpm);
+
+    print(next_pwm);
+    return 0;
+}

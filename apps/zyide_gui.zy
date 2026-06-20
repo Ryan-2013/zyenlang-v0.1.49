@@ -1,0 +1,6 @@
+import <std/cmd>;
+
+fn main() -> int {
+    print("Launching ZyenLang GUI IDE...");
+    return cmd.run("python -m zyenlang.ide_gui");
+}

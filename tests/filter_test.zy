@@ -1,0 +1,14 @@
+import <std/test>;
+import <std/filter>;
+
+fn main() -> int {
+    let t: TestStats = test.new_stats("std/filter");
+    t.eq_float("low pass", filter.low_pass_float(0.0, 10.0, 0.5), 5.0, 0.0001);
+    t.eq_float("avg3", filter.moving_avg3_float(1.0, 2.0, 3.0), 2.0, 0.0001);
+    t.eq_float("deadband zero", filter.deadband_float(0.1, 0.2), 0.0, 0.0001);
+    t.eq_float("deadband keep", filter.deadband_float(0.3, 0.2), 0.3, 0.0001);
+    t.eq_float("slew limit", filter.slew_rate_limit_float(0.0, 10.0, 2.0), 2.0, 0.0001);
+    t.eq_bool("threshold", filter.threshold_bool(3.0, 2.5), true);
+    t.eq_bool("hysteresis hold", filter.hysteresis_bool(1.5, 1.0, 2.0, true), true);
+    return t.summary();
+}

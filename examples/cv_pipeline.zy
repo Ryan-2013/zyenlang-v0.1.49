@@ -1,0 +1,10 @@
+import <std/cv>;
+
+fn main() -> int {
+    cv.require_ok(cv.resize("input.png", "build/resized.png", 320, 240));
+    cv.require_ok(cv.gray("build/resized.png", "build/gray.png"));
+    cv.require_ok(cv.canny("build/resized.png", "build/edge.png", 80, 160));
+
+    print("cv pipeline done");
+    return 0;
+}

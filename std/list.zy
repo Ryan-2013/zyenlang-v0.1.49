@@ -1,0 +1,111 @@
+// ZyenLang std/list v0.1.47
+// List helpers. User-facing functions do not expose Any; mixed values remain List-internal.
+import <std/string>;
+
+fn len(xs: List) -> int {
+    return xs.len();
+}
+
+fn is_empty(xs: List) -> bool {
+    return xs.len() == 0;
+}
+
+fn join_str(xs: List, sep: str) -> str {
+    let out: str = "";
+    for (let i: int = 0; i < xs.len(); i += 1) {
+        if (i > 0) {
+            set out += sep;
+        }
+        set out += (str)xs.get(i);
+    }
+    return out;
+}
+
+fn contains_str(xs: List, value: str) -> bool {
+    for (let i: int = 0; i < xs.len(); i += 1) {
+        if (string.eq((str)xs.get(i), value)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+fn index_of_str(xs: List, value: str) -> int {
+    for (let i: int = 0; i < xs.len(); i += 1) {
+        if (string.eq((str)xs.get(i), value)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+fn contains_int(xs: List, value: int) -> bool {
+    for (let i: int = 0; i < xs.len(); i += 1) {
+        let item: int = (int)xs.get(i);
+        if (item == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+fn index_of_int(xs: List, value: int) -> int {
+    for (let i: int = 0; i < xs.len(); i += 1) {
+        let item: int = (int)xs.get(i);
+        if (item == value) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+fn copy(xs: List) -> List {
+    let out: List;
+    for (let i: int = 0; i < xs.len(); i += 1) {
+        out.append(xs.get(i));
+    }
+    return out;
+}
+
+fn reverse(xs: List) -> List {
+    let out: List;
+    for (let offset: int = 0; offset < xs.len(); offset += 1) {
+        let idx: int = (int)(xs.len() - offset - 1);
+        out.append(xs.get(idx));
+    }
+    return out;
+}
+
+fn slice(xs: List, start: int, count: int) -> List {
+    let out: List;
+    if (start < 0) {
+        set start = 0;
+    }
+    if (count <= 0) {
+        return out;
+    }
+    let end: int = start + count;
+    if (end > xs.len()) {
+        set end = xs.len();
+    }
+    for (let i: int = start; i < end; i += 1) {
+        out.append(xs.get(i));
+    }
+    return out;
+}
+
+fn without_at(xs: List, index: int) -> List {
+    let out: List;
+    for (let i: int = 0; i < xs.len(); i += 1) {
+        if (i != index) {
+            out.append(xs.get(i));
+        }
+    }
+    return out;
+}
+
+fn append_all(target: List, source: List) -> void {
+    for (let i: int = 0; i < source.len(); i += 1) {
+        target.append(source.get(i));
+    }
+}

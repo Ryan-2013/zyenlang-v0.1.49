@@ -1,0 +1,51 @@
+// ZyenLang std/units v0.1.47
+// Unit conversion helpers for robotics/control examples.
+import <std/math>;
+
+fn deg_to_rad(deg: float) -> float {
+    return math.deg_to_rad(deg);
+}
+
+fn rad_to_deg(rad: float) -> float {
+    return math.rad_to_deg(rad);
+}
+
+fn rpm_to_rad_s(rpm: float) -> float {
+    return rpm * math.tau_float() / 60.0;
+}
+
+fn rad_s_to_rpm(rad_s: float) -> float {
+    return rad_s * 60.0 / math.tau_float();
+}
+
+fn mm_to_m(mm: float) -> float {
+    return mm / 1000.0;
+}
+
+fn m_to_mm(m: float) -> float {
+    return m * 1000.0;
+}
+
+fn cm_to_m(cm: float) -> float {
+    return cm / 100.0;
+}
+
+fn m_to_cm(m: float) -> float {
+    return m * 100.0;
+}
+
+fn g_to_kg(g: float) -> float {
+    return g / 1000.0;
+}
+
+fn kg_to_g(kg: float) -> float {
+    return kg * 1000.0;
+}
+
+fn ms_to_s(ms: float) -> float {
+    return ms / 1000.0;
+}
+
+fn s_to_ms(s: float) -> float {
+    return s * 1000.0;
+}
